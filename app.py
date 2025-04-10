@@ -47,9 +47,9 @@ def add_user():
         data = request.form # request.get_json()
         first_name = data.get('fname')
         last_name = data.get('lname')
-        role = data.get('role').lower()
+        role = data.get('role')
         password = data.get('password1')
-        if role not in ['student', 'lecturer', 'admin']:
+        if role not in ['Student', 'Lecturer', 'Admin']:
             return make_response(jsonify({'error': 'invalid role'}), 400)
         # Insert into user table
         cursor.execute("""
@@ -58,17 +58,17 @@ def add_user():
         """, (first_name, last_name, role, password))
         #Get id of last user entered
         user_id = cursor.lastrowid
-        if role == 'student':
+        if role == 'Student':
             dob = data.get("DOB")
             if not dob:
                 return make_response(jsonify({'error': 'DOB is required for Student'}), 400)
             cursor.execute("INSERT INTO Student (Std_Id,DOB) VALUES (%s,%s)", (user_id,dob))
-        elif role == 'lecturer':
+        elif role == 'Lecturer':
             department = data.get("department")
             if not department:
                 return make_response(jsonify({'error': 'Department is required for Lecturer'}), 400)
             cursor.execute("INSERT INTO Lecturer (Lect_Id,Department) VALUES (%s,%s)", (user_id,department))
-        elif role == 'admin':
+        elif role == 'Admin':
             cursor.execute("INSERT INTO Admin  (Admin_Id) VALUES (%s)", (user_id,))
         db.commit()
         return make_response(jsonify({'message': f"{role} added successfully, user ID is {user_id}"}), 201)
