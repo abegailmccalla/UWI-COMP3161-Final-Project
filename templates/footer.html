@@ -1,0 +1,39 @@
+<footer>
+    <!-- Back Button -->
+    <button onclick="goBack()" class="backButton">Back</button>
+
+    <!-- Inline CSS Styling for Back Button -->
+    <style>
+        .backButton {
+            background-color: red;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .backButton:hover {
+            background-color: #45a049;
+        }
+        footer {
+            text-align: center; /* Center-align footer content */
+            margin-top: 30px;
+        }
+    </style>
+
+    <!-- JavaScript for Back Button Functionality -->
+    <script>
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back(); // Navigate to the previous page
+            } else {
+                window.location.href = '/home'; // Fallback to a specific page
+            }
+        }
+    </script>
+</footer>

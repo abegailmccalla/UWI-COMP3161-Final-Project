@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>School Admin Webpage</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}" />
+    </head>
+    <body>
+        <!-- Buttons Section -->
+        <div id="buttons">
+            <button class="button" onclick="toggleCourseForm()">Create Course</button>
+            <button class="button" onclick="fetchCourses()">Get Courses</button>
+            <button class="button" onclick="toggleLectCourseForm()">Get Lecturer Courses</button>
+            <button class="button" onclick="toggleLectForm()">Assign Lecturer</button>
+        </div>
+
+        <!-- Course Registration Form -->
+        <div id="courseForm" style="display: none;">
+            <h1>Course Register Form</h1>
+            <form id="courseFormElement">
+                <!-- Admin ID -->
+                <label for="adminID">Admin ID:</label><br>
+                <input type="number" id="adminID" name="adminID" required><br><br>
+        
+                <!-- Course ID -->
+                <label for="courseID">course ID:</label><br>
+                <input type="text" id="courseID" name="courseID" required><br><br>
+        
+                <!-- Course Title -->
+                <label for="title">Course Title:</label><br>
+                <input type="text" id="title" name="title" required><br><br>
+        
+                <!-- Submit Button -->
+                <button type="button" class="button" onclick="registerCourse()">Register</button>
+            </form>
+        </div>
+
+        <!-- Lect Course Form -->
+        <div id="lectCourseForm" style="display: none;">
+            <h2>Lecturer Course Form</h2>
+            <form id="lectCourseFormElement">
+                <!-- Lect ID -->
+                <label for="LectID">Lecturer ID:</label><br>
+                <input type="number" id="LectID" name="LectID" required><br><br>
+                
+                <!-- Submit Button -->
+                <button type="button" class="button" onclick="lectCourse()">Submit</button>
+            </form>
+        </div>
+
+        <!-- Table for displaying courses -->
+        <table id="coursesTable" style="display: none;">
+            <caption style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Courses List</caption>
+            <!-- <h2>Courses List</h2> -->
+            <thead>
+                <tr>
+                    <th>Course ID</th>
+                    <th>Course Title</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+
+        <!-- Lect Course Form -->
+        <div id="LCForm" style="display: none;">
+            <h2>Lecturer Assignment Form</h2>
+            <form id="LCFormElement">
+                <!-- Lect ID -->
+                <label for="LID">Lecturer ID:</label><br>
+                <input type="number" id="LID" name="LID" required><br><br>
+
+                <!-- Course ID -->
+                <label for="CID">course ID:</label><br>
+                <input type="text" id="CID" name="CID" required><br><br>
+                
+                <!-- Submit Button -->
+                <button type="button" class="button" onclick="lect_C()">Submit</button>
+            </form>
+        </div>
+        <script>
+            // ------------------------------------------JavaScript to show the registration form
+            function toggleCourseForm() {
+                const form = document.getElementById("courseForm");
+                if (form.style.display === "block") {
+                    form.style.display = "none";
+                } else {
+                    form.style.display = "block";
+                    document.getElementById('lectCourseForm').style.display = "none";
+                    document.getElementById('coursesTable').style.display = "none";
+                    document.getElementById('LCForm').style.display = "none";
+                }
+            }            
+            // Function to handle user registration
+            function registerCourse() {
+                const form = document.getElementById("courseFormElement");
+                const formData = new FormData(form);
+                // Send the POST request
+                fetch("/create_course", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => {
+                    // Check if the response status is 201 (success)
+                    if (response.status === 201) {
+                        return response.json(); // Parse the JSON response
+                    } else {
+                        // Handle errors (e.g., 400, 500)
+                        return response.json().then(data => {
+                            throw new Error(data.error || "An unknown error occurred");
+                        });
+                    }
+                })
+                .then(data => {
+                    // Display the message from the server
+                    alert(data.message); // Example: "Student added successfully, user ID is 123"
+                    // Hide the form after the user presses OK
+                    document.getElementById("courseForm").style.display = "none";
+                })
+                .catch(error => {
+                    // Handle errors and display the error message
+                    console.error("Error:", error);
+                    alert(error.message);
+                });
+            }
+
+            // --------------------------Get All Courses
+            function fetchCourses() {
+                // Fetch courses from the /get_courses route
+                fetch('/get_courses')
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json(); // Parse the JSON response
+                        } else {
+                            throw new Error('Failed to fetch courses');
+                        }
+                    })
+                    .then(data => {
+                        const table = document.getElementById('coursesTable');
+                        const tableBody = table.querySelector('tbody');
+                        tableBody.innerHTML = ''; // Clear any existing rows
+                        // Populate table with courses data
+                        data.forEach(course => {
+                            const row = `<tr>
+                                            <td>${course.Course_Id}</td>
+                                            <td>${course.C_Title}</td>
+                                         </tr>`;
+                            tableBody.innerHTML += row; // Add rows dynamically
+                        });
+                        // Show the table
+                        table.style.display = 'table';
+                    })
+                    .catch(error => {
+                        // Handle errors and display the error message
+                        console.error("Error:", error);
+                        alert(error.message);
+                    });
+            }
+
+            // --------------------------Get Lecturer Courses
+            function toggleLectCourseForm() {
+                const form = document.getElementById("lectCourseForm");
+                if (form.style.display === "block") {
+                    form.style.display = "none";
+                } else {
+                    form.style.display = "block";
+                    document.getElementById("courseForm").style.display = "none";
+                    document.getElementById('coursesTable').style.display = "none";
+                }
+            } 
+            function lectCourse() {
+                // Fetch courses from the /get_courses route
+                const lecturerId = document.getElementById("LectID").value; // Get lecturer ID from input
+                if (!lecturerId) {
+                    alert("Please enter a valid Lecturer ID.");
+                    return;
+                }
+                // Fetch courses for the given lecturer ID
+                fetch(`/get_course_lecturer/${lecturerId}`)
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json(); // Parse the JSON response
+                        } else {
+                            throw new Error('Failed to fetch courses.');
+                        }
+                    })
+                    .then(data => {
+                        const table = document.getElementById('coursesTable');
+                        const tableBody = table.querySelector('tbody');
+                        tableBody.innerHTML = ''; // Clear any existing rows
+                        // Populate table with courses data
+                        data.forEach(course => {
+                            const row = `<tr>
+                                            <td>${course.Course_Id}</td>
+                                            <td>${course.C_Title}</td>
+                                         </tr>`;
+                            tableBody.innerHTML += row; // Add rows dynamically
+                        });
+                        // Show the table
+                        table.style.display = 'table';
+                    })
+                    .catch(error => {
+                        // Handle errors and display the error message
+                        console.error("Error:", error);
+                        alert(error.message);
+                    });
+            }
+
+            // ------------------------ Assign Lect To Course
+            function toggleLectForm() {
+                const form = document.getElementById("LCForm");
+                if (form.style.display === "block") {
+                    form.style.display = "none";
+                } else {
+                    form.style.display = "block";
+                    document.getElementById('lectCourseForm').style.display = "none";
+                    document.getElementById('coursesTable').style.display = "none";
+                    document.getElementById('courseForm').style.display = "none";
+                }
+            }
+            // Function to handle user registration
+            function lect_C() {
+                const form = document.getElementById("LCFormElement");
+                const formData = new FormData(form);
+                // Send the POST request
+                fetch("/register_course_lecturer", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => {
+                    // Check if the response status is 201 (success)
+                    if (response.status === 201) {
+                        return response.json(); // Parse the JSON response
+                    } else {
+                        // Handle errors (e.g., 400, 500)
+                        return response.json().then(data => {
+                            throw new Error(data.error || "An unknown error occurred");
+                        });
+                    }
+                })
+                .then(data => {
+                    // Display the message from the server
+                    alert(data.message); // Example: "Student added successfully, user ID is 123"
+                    // Hide the form after the user presses OK
+                    document.getElementById("LCForm").style.display = "none";
+                })
+                .catch(error => {
+                    // Handle errors and display the error message
+                    console.error("Error:", error);
+                    alert(error.message);
+                });
+            }
+        </script>
+    <!-- Import the footer -->
+    {% include 'footer.html' %}
+    </body>
+</html>
+-

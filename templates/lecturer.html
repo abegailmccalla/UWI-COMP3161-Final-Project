@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>School Lecturer Webpage</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}" />
+    </head>
+    <body>
+        <!-- Buttons Section -->
+        <div id="buttons">
+            <button class="button" onclick="toggleStdCourseForm()">Get Student Courses</button>
+            <button class="button" onclick="toggleCseMembersForm()">Get Course Members</button>
+        </div>
+
+        <!-- Std Course Form -->
+        <div id="stdCourseForm" style="display: none;">
+            <h2>Student Course Form</h2>
+            <form id="stdCourseFormElement">
+                <!-- Std ID -->
+                <label for="StdID">Student ID:</label><br>
+                <input type="number" id="StdID" name="StdID" required><br><br>
+                
+                <!-- Submit Button -->
+                <button type="button" class="button" onclick="stdCourse()">Submit</button>
+            </form>
+        </div>
+
+        <!-- Table for displaying courses -->
+        <table id="coursesTable" style="display: none;">
+            <caption style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Courses List</caption>
+            <!-- <h2>Courses List</h2> -->
+            <thead>
+                <tr>
+                    <th>Course ID</th>
+                    <th>Course Title</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+
+        <!-- Course Members Form -->
+        <div id="cseMembersForm" style="display: none;">
+            <h2>Course Members Form</h2>
+            <form id="cseMembersFormElement">
+                <!-- Std ID -->
+                <label for="CID">Course ID:</label><br>
+                <input type="text" id="CID" name="CID" required><br><br>
+                
+                <!-- Submit Button -->
+                <button type="button" class="button" onclick="cseMembers()">Submit</button>
+            </form>
+        </div>
+
+        <!-- Table for displaying course members -->
+        <table id="membersTable" style="display: none;">
+            <caption style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Course Members List</caption>
+            <!-- <h2>Courses List</h2> -->
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+        <script>
+            // --------------------------Get Students Courses
+            function toggleStdCourseForm() {
+                const form = document.getElementById("stdCourseForm");
+                if (form.style.display === "block") {
+                    form.style.display = "none";
+                } else {
+                    form.style.display = "block";
+                    document.getElementById('coursesTable').style.display = "none";
+                    document.getElementById("cseMembersForm").style.display = "none";
+                }
+            } 
+            function stdCourse() {
+                // Fetch courses from the /get_courses route
+                const StdID = document.getElementById("StdID").value; // Get lecturer ID from input
+                if (!StdID) {
+                    alert("Please enter a valid Student ID.");
+                    return;
+                }
+                // Fetch courses for the given lecturer ID
+                fetch(`/get_course_student/${StdID}`)
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json(); // Parse the JSON response
+                        } else {
+                            throw new Error('Failed to fetch courses.');
+                        }
+                    })
+                    .then(data => {
+                        const table = document.getElementById('coursesTable');
+                        const tableBody = table.querySelector('tbody');
+                        tableBody.innerHTML = ''; // Clear any existing rows
+                        // Populate table with courses data
+                        data.forEach(course => {
+                            const row = `<tr>
+                                            <td>${course.Course_Id}</td>
+                                            <td>${course.C_Title}</td>
+                                         </tr>`;
+                            tableBody.innerHTML += row; // Add rows dynamically
+                        });
+                        // Show the table
+                        table.style.display = 'table';
+                    })
+                    .catch(error => {
+                        // Handle errors and display the error message
+                        console.error("Error:", error);
+                        alert(error.message);
+                    });
+            }
+
+            function toggleCseMembersForm() {
+                const form = document.getElementById("cseMembersForm");
+                if (form.style.display === "block") {
+                    form.style.display = "none";
+                } else {
+                    form.style.display = "block";
+                    document.getElementById("stdCourseForm").style.display = "none";
+                    document.getElementById('coursesTable').style.display = "none";
+                }
+            } 
+            function cseMembers() {
+                const CID = document.getElementById("CID").value; // Get course ID from input
+                if (!CID) {
+                    alert("Please enter a valid Course ID.");
+                    return;
+                }
+                fetch(`/Enrols/${CID}`)
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json(); // Parse the JSON response
+                        } else {
+                            throw new Error('Failed to fetch members.');
+                        }
+                    })
+                    .then(data => {
+                        const table = document.getElementById('membersTable');
+                        const tableBody = table.querySelector('tbody');
+                        tableBody.innerHTML = ''; // Clear any existing rows
+                        data.forEach(member => {
+                            const row = `<tr>
+                                            <td>${member.userId}</td>
+                                            <td>${member.f_Name}</td>
+                                            <td>${member.l_Name}</td>
+                                            <td>${member.role}</td>
+                                         </tr>`;
+                            tableBody.innerHTML += row; // Add rows dynamically
+                        });
+                        table.style.display = 'table';
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        alert(error.message);
+                    });
+            }
+        </script>
+    <!-- Import the footer -->
+    {% include 'footer.html' %}
+    </body>
+</html>
+-

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>School Student Webpage</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}" />
+</head>
+<body>
+    <!-- Buttons Section -->
+    <div id="buttons">
+        <button class="button" onclick="toggleStdForm()">Assign Student</button>
+    </div>
+
+    <!-- Student Course Form -->
+    <div id="SCForm" style="display: none;">
+        <h2>Student Assignment Form</h2>
+        <form id="SCFormElement">
+            <!-- Student ID -->
+            <label for="SID">Student ID:</label><br>
+            <input type="number" id="SID" name="SID" required><br><br>
+
+            <!-- Course ID -->
+            <label for="CID">Course ID:</label><br>
+            <input type="text" id="CID" name="CID" required><br><br>
+
+            <!-- Submit Button -->
+            <button type="button" class="button" onclick="Std_C()">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        // Toggle the visibility of the form
+        function toggleStdForm() {
+            const form = document.getElementById("SCForm");
+            if (form.style.display === "block") {
+                form.style.display = "none";
+            } else {
+                form.style.display = "block";
+            }
+        }
+        // Function to handle user registration
+        function Std_C() {
+            const form = document.getElementById("SCFormElement");
+            const formData = new FormData(form);
+            // Send the POST request
+            fetch("/register_course_student", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => {
+                // Check if the response status is 201 (success)
+                if (response.status === 201) {
+                    return response.json(); // Parse the JSON response
+                } else {
+                    // Handle errors (e.g., 400, 500)
+                    return response.json().then(data => {
+                        throw new Error(data.error || "An unknown error occurred");
+                    });
+                }
+            })
+            .then(data => {
+                // Display the message from the server
+                alert(data.message); // Example: "Student added successfully, user ID is 123"
+                // Hide the form after the user presses OK
+                document.getElementById("SCForm").style.display = "none";
+            })
+            .catch(error => {
+                // Handle errors and display the error message
+                console.error("Error:", error);
+                alert(error.message);
+            });
+        }
+    </script>
+
+    <!-- Import the footer -->
+    {% include 'footer.html' %}
+</body>
+</html>
