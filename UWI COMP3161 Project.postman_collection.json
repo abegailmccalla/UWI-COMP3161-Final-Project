@@ -1,0 +1,329 @@
+{
+	"info": {
+		"_postman_id": "116bda5c-ae30-42e0-800b-131bb377bb1a",
+		"name": "UWI COMP3161 Project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32617996"
+	},
+	"item": [
+		{
+			"name": "add_user()",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "fname",
+							"value": "Jane",
+							"type": "text"
+						},
+						{
+							"key": "lname",
+							"value": "Doe",
+							"type": "text"
+						},
+						{
+							"key": "role",
+							"value": "Student",
+							"type": "text"
+						},
+						{
+							"key": "password1",
+							"value": "jd123",
+							"type": "text"
+						},
+						{
+							"key": "DOB",
+							"value": "2003-06-22",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/register_user",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"register_user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login()",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "userID",
+							"value": "620001064",
+							"type": "text"
+						},
+						{
+							"key": "password2",
+							"value": "jd123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/login",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "newCourse()",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "courseID",
+							"value": "llll-1234",
+							"type": "text"
+						},
+						{
+							"key": "title",
+							"value": "Physics for Engineers",
+							"type": "text"
+						},
+						{
+							"key": "adminID",
+							"value": "620000000",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/create_course",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"create_course"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_all_courses()",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/get_courses",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"get_courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_lecturer_courses(id)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/get_course_lecturer/620000020",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"get_course_lecturer",
+						"620000020"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_student_courses(id)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/get_course_student/620000060",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"get_course_student",
+						"620000060"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register()",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "SID",
+							"value": "620000411",
+							"type": "text"
+						},
+						{
+							"key": "CID",
+							"value": "YOug-3305",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/register_course_student",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"register_course_student"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "teach()",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "LID",
+							"value": "620000020",
+							"type": "text"
+						},
+						{
+							"key": "CID",
+							"value": "dHnx-8328",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/register_course_lecturer",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"register_course_lecturer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_members_by_Course_Id(Course_Id)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/Enrols/dHnx-8328",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"Enrols",
+						"dHnx-8328"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_events_by_course_Id(Course_Id)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/Calendar_Events/dHnx-8328",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"Calendar_Events",
+						"dHnx-8328"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

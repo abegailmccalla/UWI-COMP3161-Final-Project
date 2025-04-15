@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>School Website</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}" />
+    </head>
+    <body>
+        <!-- Conditional display for SQL tables or image -->
+        <img src="{{ url_for('static', filename='image1.png') }}" alt="Art" width="700" height="450" />
+
+        <!-- Content Section -->
+        <h1>SCHOOL ACCESS</h1>
+        <p>
+            May We Flourish In Virtue and Wisdom
+        </p>
+
+        <!-- Buttons Section -->
+        <div id="buttons">
+            <button class="button" onclick="showRegisterForm()">Register User</button>
+            <button class="button" onclick="showLoginForm()">Login User</button>
+        </div>
+
+        <!-- Registration Form -->
+        <div id="registerForm" style="display: none;">
+            <h2>Register User</h2>
+            <form id="registerFormElement">
+                <!-- First Name -->
+                <label for="fname">First Name:</label><br>
+                <input type="text" id="fname" name="fname" required><br><br>
+        
+                <!-- Last Name -->
+                <label for="lname">Last Name:</label><br>
+                <input type="text" id="lname" name="lname" required><br><br>
+        
+                <!-- Radio Box for Role -->
+                <label for="role">Role:</label><br>
+                <input type="radio" id="student" name="role" value="Student" onclick="showAdditionalField('studentField')"> Student<br>
+                <input type="radio" id="lecturer" name="role" value="Lecturer" onclick="showAdditionalField('lecturerField')"> Lecturer<br><br>
+        
+                <!-- Additional Field for Student -->
+                <div id="studentField" style="display: none;">
+                    <label for="DOB">DOB (YYYY-MM-DD):</label><br>
+                    <input type="text" id="DOB" name="DOB"><br><br>
+                </div>
+        
+                <!-- Additional Field for Lecturer -->
+                <div id="lecturerField" style="display: none;">
+                    <label for="department">Department:</label><br>
+                    <input type="text" id="department" name="department"><br><br>
+                </div>
+        
+                <!-- Password -->
+                <label for="password1">Password:</label><br>
+                <input type="password" id="password1" name="password1" required><br><br>
+        
+                <!-- Submit Button -->
+                <button type="button" class="button" onclick="registerUser()">Register</button>
+            </form>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginForm" style="display: none;">
+            <h3>Login Form</h3>
+            <form id="loginFormElement">
+                <!-- User ID -->
+                <label for="userID">User ID:</label><br>
+                <input type="number" id="userID" name="userID" required><br><br>
+
+                <!-- Password -->
+                <label for="password2">Password:</label><br>
+                <input type="password" id="password2" name="password2" required><br><br>
+        
+                <!-- Submit Button -->
+                <button type="button" class="button" onclick="userLogin()">Login</button>
+            </form>
+        </div>
+        <div id="successMessage" style="display: none; color: green; font-weight: bold; margin-top: 20px;">
+            Login was successful!
+        </div>        
+        <script>
+            // ------------------------------------------JavaScript to show the registration form
+            function showRegisterForm() {
+                document.getElementById("registerForm").style.display = "block"; //Show
+                document.getElementById("loginForm").style.display = "none"; //Hide
+            }
+            // Show additional field based on selected radio box
+            function showAdditionalField(fieldId) {
+                // Hide all additional fields
+                document.getElementById("studentField").style.display = "none";
+                document.getElementById("lecturerField").style.display = "none";
+        
+                // Show the selected field
+                document.getElementById(fieldId).style.display = "block";
+            }
+            // Function to handle user registration
+            function registerUser() {
+                const form = document.getElementById("registerFormElement");
+                const formData = new FormData(form);
+                // Send the POST request
+                fetch("/register_user", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => {
+                    // Check if the response status is 201 (success)
+                    if (response.status === 201) {
+                        return response.json(); // Parse the JSON response
+                    } else {
+                        // Handle errors (e.g., 400, 500)
+                        return response.json().then(data => {
+                            throw new Error(data.error || "An unknown error occurred");
+                        });
+                    }
+                })
+                .then(data => {
+                    // Display the message from the server
+                    alert(data.message); // Example: "Student added successfully, user ID is 123"
+                    // Hide the form after the user presses OK
+                    document.getElementById("registerForm").style.display = "none";
+                })
+                .catch(error => {
+                    // Handle errors and display the error message
+                    console.error("Error:", error);
+                    alert(error.message);
+                });
+            }
+
+            // ------------------------------------------- JavaScript to show the Admin form
+            function showLoginForm() {
+                document.getElementById("registerForm").style.display = "none";
+                document.getElementById("loginForm").style.display = "block";
+            }
+            // Function to handle user registration
+            function userLogin() {
+                const form = document.getElementById("loginFormElement");
+                const formData = new FormData(form);
+            
+                // Send the POST request to the backend
+                fetch("/login", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                    } else if (data.error) {
+                        alert(data.error);
+                    } else if (data.message) {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("An unknown error occurred during login.");
+                });
+            }
+        </script>
+    </body>
+</html>
+-

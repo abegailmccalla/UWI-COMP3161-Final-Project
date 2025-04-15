@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>School Student Webpage</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}" />
+</head>
+<body>
+    <!-- Buttons Section -->
+    <div id="buttons">
+        <button class="button" onclick="toggleStdForm()">Assign Student</button>
+        <button class = "button" onclick = "toggleViewForumForm()">Views Forums</button>
+        <button class="button" onclick="toggleSTForm()">See Threads</button> <br><br>
+        <button class="button" onclick="toggleCTForm()">Create Thread</button>
+        <button class="button" onclick="toggleRTForm()">Reply To Thread</button>
+        <button class = "button" onclick = "toggleCEForm()">Get Calendar Events</button> <br><br>
+        <button class="button" onclick="toggleViewContentForm()">View Course Content</button>
+        <button class="button" onclick="toggleViewAssForm()">View Course Assignments</button>
+        <button class="button" onclick="toggleSubmitAssForm()">Submit Course Assignment</button> <br><br>
+    </div>
+
+    <!-- Student Course Form -->
+    <div id="SCForm" style="display: none;">
+        <h2>Student Assignment Form</h2>
+        <form id="SCFormElement">
+            <!-- Student ID -->
+            <label for="SID">Student ID:</label><br>
+            <input type="number" id="SID" name="SID" required><br><br>
+
+            <!-- Course ID -->
+            <label for="CID">Course ID:</label><br>
+            <input type="text" id="CID" name="CID" required><br><br>
+
+            <!-- Submit Button -->
+            <button type="button" class="button" onclick="Std_C()">Submit</button>
+        </form>
+    </div>
+
+    <!-- Student Create Thread Form -->
+    <div id="CTForm" style="display: none;">
+        <h2>Create Thread Form</h2>
+        <form id="CTFormElement">
+            <label for="FID">Forum ID:</label><br>
+            <input type="number" id="FID" name="FID" required><br><br>
+
+            <label for="CTtitle">Thread Title:</label><br>
+            <input type="text" id="CTtitle" name="CTtitle" required><br><br>
+
+            <label for="CTdte">Date (YYYY-MM-DD):</label><br>
+            <input type="text" id="CTdte" name="CTdte" required><br><br>
+
+            <!-- Submit Button -->
+            <button type="button" class="button" onclick="C_Thread()">Submit</button>
+        </form>
+    </div>
+
+    <!-- Student Reply To Thread Form -->
+    <div id="RTForm" style="display: none;">
+        <h2>Reply To Thread Form</h2>
+        <form id="RTFormElement">
+            <label for="TID">Thread ID:</label><br>
+            <input type="number" id="TID" name="TID" required><br><br>
+
+            <label for="RTtitle">Thread Title:</label><br>
+            <input type="text" id="RTtitle" name="RTtitle" required><br><br>
+
+            <label for="RTdte">Date (YYYY-MM-DD):</label><br>
+            <input type="text" id="RTdte" name="RTdte" required><br><br>
+
+            <!-- Submit Button -->
+            <button type="button" class="button" onclick="R_Thread()">Submit</button>
+        </form>
+    </div>
+
+    <div id="submitAssForm" style="display: none;">
+        <h2>Submit Course Assignment</h2>
+        <form id="submitAssFormElement">
+
+            <label for="subStdID">Student ID:</label><br>
+            <input type="number" id="subStdID" name="subStdID" required><br><br>
+
+            <label for="subAssID">Assignment ID:</label><br>
+            <input type="number" id="subAssID" name="subAssID" required><br><br>
+
+            <label for="subFile">Submission File:</label><br>
+            <input type="text" id="subFile" name="subFile" required><br><br>
+            
+            <button type="button" class="button" onclick="submitAss()">Submit</button>
+        </form>
+    </div>
+
+    <div id="STForm" style="display: none;">
+        <h2>See Threads Form</h2>
+        <form id="STFormElement">
+
+            <label for="ForumID">Forum ID:</label><br>
+            <input type="number" id="ForumID" name="ForumID" required><br><br>
+            
+            <button type="button" class="button" onclick="S_Threads()">Submit</button>
+        </form>
+    </div>
+    <table id="STTable" style="display: none;">
+        <caption style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Courses List</caption>
+        <thead>
+            <tr>
+                <th>Thread ID</th>
+                <th>Forum ID</th>
+                <th>Thread Title</th>
+                <th>Thread Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be dynamically added here -->
+        </tbody>
+    </table>
+
+    <!-- Calendar Events Form -->
+    <div id="CEForm" style="display: none;">
+        <h2>Calendar Events Form</h2>
+        <form id="CEFormElement">
+            <!-- Std ID -->
+            <label for="CEID">Student ID:</label><br>
+            <input type="text" id="CEID" name="CEID" required><br><br>
+
+            <label for="CEdate">Date (YYYY-MM-DD):</label><br>
+            <input type="text" id="CEdate" name="CEdate" required><br><br>
+            
+            <!-- Submit Button -->
+            <button type="button" class="button" onclick="C_Events()">Submit</button>
+        </form>
+    </div>
+    <!-- Table for displaying course members -->
+    <table id="CETable" style="display: none;">
+        <caption style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Calendar Events List</caption>
+        <!-- <h2>Courses List</h2> -->
+        <thead>
+            <tr>
+                <th>Event ID</th>
+                <th>Course ID</th>
+                <th>Course Title</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Event Title</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be dynamically added here -->
+        </tbody>
+    </table>
+
+    <!--Form: View Forums Form-->
+    <div id = "viewForumForm" style = "display: none;">
+        <h2>View Course Forums</h2>
+        <form id = "viewForumFormElement">
+            <label for = "viewForumCourseID">Course ID:</label><br>
+            <input type = "text" id = "viewForumCourseID" required><br><br>
+    
+            <button type = "button" class = "button" onclick = "getForums()">Submit</button>
+        </form>  
+    </div>
+    <!-- Forum Table -->
+    <table id = "forumTable" style = "display: none;">
+        <caption>Forums</caption>
+        <thead>
+            <tr>
+                <th>Forum ID</th>
+                <th>Course ID</th>
+                <th>Forum Title</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Forum data goes here -->
+        </tbody>
+    </table>
+
+    <!--Form: View Content : Retrieve Content-->
+    <div id = "viewContentForm" style="display: none;">
+        <h2>View Course Content</h2>
+        <form id = "viewContentFormElement">
+            <!--Course ID-->
+            <label for = "viewCourseID">Course ID:</label><br>
+            <input type = "text" id = "viewCourseID" name = "viewCourseID" required><br><br>
+
+            <!--Submit-->
+            <button type = "button" class = "button" onclick="getCourseContent()">Submit</button>
+        </form>
+    </div>
+    <!-- Course Content Table -->
+    <table id = "courseContentTable" style = "display: none;">
+        <caption>Course Content</caption>
+        <thead>
+            <tr>
+                <th>Topic ID</th>
+                <th>Topic Title</th>
+                <th>Content ID</th>
+                <th>Content Link</th>
+                <th>Content File</th>
+                <th>Content Slide</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Forum data goes here -->
+        </tbody>
+    </table>
+
+    <div id="viewAssForm" style="display: none;">
+        <h2>See Course Assignments</h2>
+        <form id="viewAssFormElement">
+
+            <label for="AssID">Course ID:</label><br>
+            <input type="text" id="AssID" name="AssID" required><br><br>
+            
+            <button type="button" class="button" onclick="getCourseAss()">Submit</button>
+        </form>
+    </div>
+    <table id="viewAssTable" style="display: none;">
+        <caption style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Course Assignments</caption>
+        <thead>
+            <tr>
+                <th>Assignment ID</th>
+                <th>Assignment Title</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be dynamically added here -->
+        </tbody>
+    </table>
+    <script>
+        // ############################# Assign Courses
+        // Toggle the visibility of the form
+        function toggleStdForm() {
+            const form = document.getElementById("SCForm");
+            if (form.style.display === "block") {
+                form.style.display = "none";
+            } else {
+                form.style.display = "block";
+                document.getElementById("CTForm").style.display = "none";
+                document.getElementById("RTForm").style.display = "none";
+                document.getElementById("submitAssForm").style.display = "none";
+                document.getElementById("STForm").style.display = "none";
+                document.getElementById("STTable").style.display = "none";
+                document.getElementById("CEForm").style.display = "none";
+                document.getElementById("CETable").style.display = "none";
+                document.getElementById("viewForumForm").style.display = "none";
+                document.getElementById("forumTable").style.display = "none";
+                document.getElementById("viewContentForm").style.display = "none";
+                document.getElementById("courseContentTable").style.display = "none";
+                document.getElementById("viewAssForm").style.display = "none";
+                document.getElementById("viewAssTable").style.display = "none";
+            }
+        }
+        // Function to handle user registration
+        function Std_C() {
+            const form = document.getElementById("SCFormElement");
+            const formData = new FormData(form);
+            // Send the POST request
+            fetch("/register_course_student", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => {
+                // Check if the response status is 201 (success)
+                if (response.status === 201) {
+                    return response.json(); // Parse the JSON response
+                } else {
+                    // Handle errors (e.g., 400, 500)
+                    return response.json().then(data => {
+                        throw new Error(data.error || "An unknown error occurred");
+                    });
+                }
+            })
+            .then(data => {
+                // Display the message from the server
+                alert(data.message); // Example: "Student added successfully, user ID is 123"
+                // Hide the form after the user presses OK
+                document.getElementById("SCForm").style.display = "none";
+            })
+            .catch(error => {
+                // Handle errors and display the error message
+                console.error("Error:", error);
+                alert(error.message);
+            });
+        }
+
+        // ############################### See Threads
+        function toggleSTForm() {
+            const form = document.getElementById("STForm");
+            if (form.style.display === "block") {
+                form.style.display = "none";
+            } else {
+                form.style.display = "block";
+                document.getElementById("SCForm").style.display = "none";
+                document.getElementById("CTForm").style.display = "none";
+                document.getElementById("RTForm").style.display = "none";
+                document.getElementById("submitAssForm").style.display = "none";
+                document.getElementById("STTable").style.display = "none";
+                document.getElementById("CEForm").style.display = "none";
+                document.getElementById("CETable").style.display = "none";
+                document.getElementById("viewForumForm").style.display = "none";
+                document.getElementById("forumTable").style.display = "none";
+                document.getElementById("viewContentForm").style.display = "none";
+                document.getElementById("courseContentTable").style.display = "none";
+                document.getElementById("viewAssForm").style.display = "none";
+                document.getElementById("viewAssTable").style.display = "none";
+            }
+        }
+        function S_Threads() {
+            // Fetch courses from the /get_courses route
+            const ForumID = document.getElementById("ForumID").value; // Get lecturer ID from input
+            if (!ForumID) {
+                alert("Please enter a valid Forum ID.");
+                return;
+            }
+            // Fetch courses for the given lecturer ID
+            fetch(`/see_threads/${ForumID}`)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json(); // Parse the JSON response
+                    } else {
+                        throw new Error('Failed to fetch threads.');
+                    }
+                })
+                .then(data => {
+                    const table = document.getElementById('STTable');
+                    const tableBody = table.querySelector('tbody');
+                    tableBody.innerHTML = ''; // Clear any existing rows
+                    // Populate table with courses data
+                    data.forEach(thread => {
+                        const row = `<tr>
+                                        <td>${thread.Thread_Id}</td>
+                                        <td>${thread.Forum_Id}</td>
+                                        <td>${thread.Thread_Title}</td>
+                                        <td>${thread.date}</td>
+                                     </tr>`;
+                        tableBody.innerHTML += row; // Add rows dynamically
+                    });
+                    // Show the table
+                    table.style.display = 'table';
+                })
+                .catch(error => {
+                    // Handle errors and display the error message
+                    console.error("Error:", error);
+                    alert(error.message);
+                });
+        }
+
+        // ########################### Create Thread
+        function toggleCTForm() {
+            const form = document.getElementById("CTForm");
+            if (form.style.display === "block") {
+                form.style.display = "none";
+            } else {
+                form.style.display = "block";
+                document.getElementById("SCForm").style.display = "none";
+                document.getElementById("RTForm").style.display = "none";
+                document.getElementById("submitAssForm").style.display = "none";
+                document.getElementById("STForm").style.display = "none";
+                document.getElementById("STTable").style.display = "none";
+                document.getElementById("CEForm").style.display = "none";
+                document.getElementById("CETable").style.display = "none";
+                document.getElementById("viewForumForm").style.display = "none";
+                document.getElementById("forumTable").style.display = "none";
+                document.getElementById("viewContentForm").style.display = "none";
+                document.getElementById("courseContentTable").style.display = "none";
+                document.getElementById("viewAssForm").style.display = "none";
+                document.getElementById("viewAssTable").style.display = "none";
+            }
+        }
+        function C_Thread() {
+            const form = document.getElementById("CTFormElement");
+            const formData = new FormData(form);
+            // Send the POST request
+            fetch("/create_threads", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => {
+                // Check if the response status is 201 (success)
+                if (response.status === 201) {
+                    return response.json(); // Parse the JSON response
+                } else {
+                    // Handle errors (e.g., 400, 500)
+                    return response.json().then(data => {
+                        throw new Error(data.error || "An unknown error occurred");
+                    });
+                }
+            })
+            .then(data => {
+                // Display the message from the server
+                alert(data.message); // Example: "Student added successfully, user ID is 123"
+                // Hide the form after the user presses OK
+                document.getElementById("CTForm").style.display = "none";
+            })
+            .catch(error => {
+                // Handle errors and display the error message
+                console.error("Error:", error);
+                alert(error.message);
+            });
+        }
+
+        // ########################### Reply Thread
+        function toggleRTForm() {
+            const form = document.getElementById("RTForm");
+            if (form.style.display === "block") {
+                form.style.display = "none";
+            } else {
+                form.style.display = "block";
+                document.getElementById("SCForm").style.display = "none";
+                document.getElementById("CTForm").style.display = "none";
+                document.getElementById("submitAssForm").style.display = "none";
+                document.getElementById("STForm").style.display = "none";
+                document.getElementById("STTable").style.display = "none";
+                document.getElementById("CEForm").style.display = "none";
+                document.getElementById("CETable").style.display = "none";
+                document.getElementById("viewForumForm").style.display = "none";
+                document.getElementById("forumTable").style.display = "none";
+                document.getElementById("viewContentForm").style.display = "none";
+                document.getElementById("courseContentTable").style.display = "none";
+                document.getElementById("viewAssForm").style.display = "none";
+                document.getElementById("viewAssTable").style.display = "none";
+            }
+        }
+        function R_Thread() {
+            const form = document.getElementById("RTFormElement");
+            const formData = new FormData(form);
+            // Send the POST request
+            fetch("/reply_threads", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => {
+                // Check if the response status is 201 (success)
+                if (response.status === 201) {
+                    return response.json(); // Parse the JSON response
+                } else {
+                    // Handle errors (e.g., 400, 500)
+                    return response.json().then(data => {
+                        throw new Error(data.error || "An unknown error occurred");
+                    });
+                }
+            })
+            .then(data => {
+                // Display the message from the server
+                alert(data.message); // Example: "Student added successfully, user ID is 123"
+                // Hide the form after the user presses OK
+                document.getElementById("RTForm").style.display = "none";
+            })
+            .catch(error => {
+                // Handle errors and display the error message
+                console.error("Error:", error);
+                alert(error.message);
+            });
+        }
+
+        function toggleCEForm() {
+            const form = document.getElementById("CEForm");
+            if (form.style.display === "block") {
+                form.style.display = "none";
+            } else {
+                form.style.display = "block";
+                document.getElementById("SCForm").style.display = "none";
+                document.getElementById("CTForm").style.display = "none";
+                document.getElementById("RTForm").style.display = "none";
+                document.getElementById("submitAssForm").style.display = "none";
+                document.getElementById("STForm").style.display = "none";
+                document.getElementById("STTable").style.display = "none";
+                document.getElementById("CETable").style.display = "none";
+                document.getElementById("viewForumForm").style.display = "none";
+                document.getElementById("forumTable").style.display = "none";
+                document.getElementById("viewContentForm").style.display = "none";
+                document.getElementById("courseContentTable").style.display = "none";
+                document.getElementById("viewAssForm").style.display = "none";
+                document.getElementById("viewAssTable").style.display = "none";
+            }
+        } 
+        function C_Events() {
+            const CEID = document.getElementById("CEID").value; // Get course ID from input
+            const CEdate = document.getElementById("CEdate").value; // Get course ID from input
+            if (!CEID || !CEdate) {
+                alert("Please enter a valid Student ID and Date.");
+                return;
+            }
+            fetch(`/Calendar_Events/${CEID}/${CEdate}`)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json(); // Parse the JSON response
+                    } else {
+                        throw new Error('Failed to fetch events.');
+                    }
+                })
+                .then(data => {
+                    const table = document.getElementById('CETable');
+                    const tableBody = table.querySelector('tbody');
+                    tableBody.innerHTML = ''; // Clear any existing rows
+                    data.forEach(event => {
+                        const row = `<tr>
+                                        <td>${event.Event_Id}</td>
+                                        <td>${event.Course_Id}</td>
+                                        <td>${event.Course_Title}</td>
+                                        <td>${event.Start_Date}</td>
+                                        <td>${event.End_Date}</td>
+                                        <td>${event.Event_Title}</td>
+                                     </tr>`;
+                        tableBody.innerHTML += row; // Add rows dynamically
+                    });
+                    table.style.display = 'table';
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert(error.message);
+                });
+        }
+
+        //-----------------------------Retrieve Forum
+        //Toggle Form Visibility
+        function toggleViewForumForm()  {
+            const form = document.getElementById("viewForumForm");
+            if (form.style.display === "block") {
+                form.style.display = "none";
+            } else {
+                form.style.display = "block";
+                document.getElementById("SCForm").style.display = "none";
+                document.getElementById("CTForm").style.display = "none";
+                document.getElementById("RTForm").style.display = "none";
+                document.getElementById("submitAssForm").style.display = "none";
+                document.getElementById("STForm").style.display = "none";
+                document.getElementById("STTable").style.display = "none";
+                document.getElementById("CEForm").style.display = "none";
+                document.getElementById("CETable").style.display = "none";
+                document.getElementById("forumTable").style.display = "none";
+                document.getElementById("viewContentForm").style.display = "none";
+                document.getElementById("courseContentTable").style.display = "none";
+                document.getElementById("viewAssForm").style.display = "none";
+                document.getElementById("viewAssTable").style.display = "none";
+            }
+        } 
+        function getForums() 
+        {
+            //Function to retrieve forum for a given course
+            const courseID = document.getElementById("viewForumCourseID").value.trim();
+
+            //Ensures field is not empty
+            if (!courseID) {
+                alert("Please enter a Course ID");
+                return;
+            }
+
+            fetch(`/forums/${courseID}`)
+                .then(response => {
+                    if (response.ok)
+                    {
+                        return response.json();
+                    }
+                    throw new Error("Error Fetching Course Forum")
+                })
+                .then(data => {
+                    const table = document.getElementById("forumTable");
+                    const tbody = table.querySelector("tbody");
+                    tbody.innerHTML = "";
+
+                    data.forEach(forum => {
+                        const row = `<tr>
+                            <td>${forum.forumID}</td>
+                            <td>${forum.courseID}</td>
+                            <td>${forum.title}</td>
+                        </tr>`;
+                        tbody.innerHTML += row;
+                    });
+
+                    table.style.display = "table";
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert(error.message);
+                });
+        }
+
+        //---------------------------------Retrieve Content
+        //Toggle Form Visibility
+        function toggleViewContentForm()  {
+            const form = document.getElementById("viewContentForm");
+            if (form.style.display === "block") {
+                form.style.display = "none";
+            } else {
+                form.style.display = "block";
+                document.getElementById("SCForm").style.display = "none";
+                document.getElementById("CTForm").style.display = "none";
+                document.getElementById("RTForm").style.display = "none";
+                document.getElementById("submitAssForm").style.display = "none";
+                document.getElementById("STForm").style.display = "none";
+                document.getElementById("STTable").style.display = "none";
+                document.getElementById("CEForm").style.display = "none";
+                document.getElementById("CETable").style.display = "none";
+                document.getElementById("viewForumForm").style.display = "none";
+                document.getElementById("forumTable").style.display = "none";
+                document.getElementById("courseContentTable").style.display = "none";
+                document.getElementById("viewAssForm").style.display = "none";
+                document.getElementById("viewAssTable").style.display = "none";
+            }
+        } 
+        function getCourseContent() {
+            const courseID = document.getElementById("viewCourseID").value.trim();
+            //Ensure courseID entered
+            if (!courseID) {
+                alert("Please enter a Course ID.");
+                return;
+            }
+            fetch(`/course_content/${courseID}`)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json(); // Parse the JSON response
+                    } else {
+                        throw new Error('Failed to fetch contents.');
+                    }
+                })
+                .then(data => {
+                    const table = document.getElementById('courseContentTable');
+                    const tableBody = table.querySelector('tbody');
+                    tableBody.innerHTML = ''; // Clear any existing rows
+                    data.forEach(content => {
+                        const row = `<tr>
+                                        <td>${content.topicId}</td>
+                                        <td>${content.topicTitle}</td>
+                                        <td>${content.contentId}</td>
+                                        <td>${content.link}</td>
+                                        <td>${content.file}</td>
+                                        <td>${content.slide}</td>
+                                     </tr>`;
+                        tableBody.innerHTML += row; // Add rows dynamically
+                    });
+                    table.style.display = 'table';
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert(error.message);
+                });
+        }
+
+        //---------------------------------Retrieve Assignment
+        //Toggle Form Visibility
+        function toggleViewAssForm()  {
+            const form = document.getElementById("viewAssForm");
+            if (form.style.display === "block") {
+                form.style.display = "none";
+            } else {
+                form.style.display = "block";
+                document.getElementById("SCForm").style.display = "none";
+                document.getElementById("CTForm").style.display = "none";
+                document.getElementById("RTForm").style.display = "none";
+                document.getElementById("submitAssForm").style.display = "none";
+                document.getElementById("STForm").style.display = "none";
+                document.getElementById("STTable").style.display = "none";
+                document.getElementById("CEForm").style.display = "none";
+                document.getElementById("CETable").style.display = "none";
+                document.getElementById("viewForumForm").style.display = "none";
+                document.getElementById("forumTable").style.display = "none";
+                document.getElementById("viewContentForm").style.display = "none";
+                document.getElementById("courseContentTable").style.display = "none";
+                document.getElementById("viewAssTable").style.display = "none";
+            }
+        } 
+        function getCourseAss() {
+            const courseID = document.getElementById("AssID").value.trim();
+            //Ensure courseID entered
+            if (!courseID) {
+                alert("Please enter a Course ID.");
+                return;
+            }
+            fetch(`/see_assignment/${courseID}`)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json(); // Parse the JSON response
+                    } else {
+                        throw new Error('Failed to fetch assignments.');
+                    }
+                })
+                .then(data => {
+                    const table = document.getElementById('viewAssTable');
+                    const tableBody = table.querySelector('tbody');
+                    tableBody.innerHTML = ''; // Clear any existing rows
+                    data.forEach(ass => {
+                        const row = `<tr>
+                                        <td>${ass.Assign_Id}</td>
+                                        <td>${ass.Assign_Title}</td>
+                                     </tr>`;
+                        tableBody.innerHTML += row; // Add rows dynamically
+                    });
+                    table.style.display = 'table';
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert(error.message);
+                });
+        }
+
+        //---------------------------------Submit Assignment
+        //Toggle Form Visibility
+        function toggleSubmitAssForm()  {
+            const form = document.getElementById("submitAssForm");
+            if (form.style.display === "block") {
+                form.style.display = "none";
+            } else {
+                document.getElementById("SCForm").style.display = "none";
+                document.getElementById("CTForm").style.display = "none";
+                document.getElementById("RTForm").style.display = "none";
+                document.getElementById("STForm").style.display = "none";
+                document.getElementById("STTable").style.display = "none";
+                document.getElementById("CEForm").style.display = "none";
+                document.getElementById("CETable").style.display = "none";
+                document.getElementById("viewForumForm").style.display = "none";
+                document.getElementById("forumTable").style.display = "none";
+                document.getElementById("viewContentForm").style.display = "none";
+                document.getElementById("courseContentTable").style.display = "none";
+                document.getElementById("viewAssForm").style.display = "none";
+                document.getElementById("viewAssTable").style.display = "none";
+            }
+        }
+        function submitAss() {
+            const form = document.getElementById("submitAssFormElement");
+            const formData = new FormData(form);
+            // Send the POST request
+            fetch("/submit_assignment", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => {
+                // Check if the response status is 201 (success)
+                if (response.status === 201) {
+                    return response.json(); // Parse the JSON response
+                } else {
+                    // Handle errors (e.g., 400, 500)
+                    return response.json().then(data => {
+                        throw new Error(data.error || "An unknown error occurred");
+                    });
+                }
+            })
+            .then(data => {
+                // Display the message from the server
+                alert(data.message); // Example: "Student added successfully, user ID is 123"
+                // Hide the form after the user presses OK
+                document.getElementById("submitAssForm").style.display = "none";
+            })
+            .catch(error => {
+                // Handle errors and display the error message
+                console.error("Error:", error);
+                alert(error.message);
+            });
+        }
+    </script>
+    <!-- Import the footer -->
+    {% include 'footer.html' %}
+</body>
+</html>

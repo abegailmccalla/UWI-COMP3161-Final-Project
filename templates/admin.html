@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>School Admin Webpage</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}" />
+    </head>
+    <body>
+        <!-- Buttons Section -->
+        <div id="buttons">
+            <button class="button" onclick="toggleCourseForm()">Create Course</button>
+            <button class="button" onclick="fetchCourses()">Get Courses</button>
+            <button class="button" onclick="toggleLectCourseForm()">Get Lecturer Courses</button> <br><br>
+            <button class="button" onclick="toggleLectForm()">Assign Lecturer</button>
+            <button class="button" onclick="fetchC50Table()">Courses With 50+ Students</button>
+            <button class="button" onclick="fetchS5Table()">Students With 5+ Courses</button> <br><br>
+            <button class="button" onclick="fetchL3Table()">Lecturers With 3+ Courses</button> 
+            <button class="button" onclick="fetchC10Table()">10 Most Enrolled Courses</button> 
+            <button class="button" onclick="fetchS10Table()">Top 10 Students</button> <br><br>
+        </div>
+
+        <!-- Course Registration Form -->
+        <div id="courseForm" style="display: none;">
+            <h1>Course Register Form</h1>
+            <form id="courseFormElement">
+                <!-- Admin ID -->
+                <label for="adminID">Admin ID:</label><br>
+                <input type="number" id="adminID" name="adminID" required><br><br>
+        
+                <!-- Course ID -->
+                <label for="courseID">course ID:</label><br>
+                <input type="text" id="courseID" name="courseID" required><br><br>
+        
+                <!-- Course Title -->
+                <label for="title">Course Title:</label><br>
+                <input type="text" id="title" name="title" required><br><br>
+        
+                <!-- Submit Button -->
+                <button type="button" class="button" onclick="registerCourse()">Register</button>
+            </form>
+        </div>
+
+        <!-- Lect Course Form -->
+        <div id="lectCourseForm" style="display: none;">
+            <h2>Lecturer Course Form</h2>
+            <form id="lectCourseFormElement">
+                <!-- Lect ID -->
+                <label for="LectID">Lecturer ID:</label><br>
+                <input type="number" id="LectID" name="LectID" required><br><br>
+                
+                <!-- Submit Button -->
+                <button type="button" class="button" onclick="lectCourse()">Submit</button>
+            </form>
+        </div>
+
+        <!-- Table for displaying courses -->
+        <table id="coursesTable" style="display: none;">
+            <caption style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Courses List</caption>
+            <!-- <h2>Courses List</h2> -->
+            <thead>
+                <tr>
+                    <th>Course ID</th>
+                    <th>Course Title</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+
+        <!-- Lect Course Form -->
+        <div id="LCForm" style="display: none;">
+            <h2>Lecturer Assignment Form</h2>
+            <form id="LCFormElement">
+                <!-- Lect ID -->
+                <label for="LID">Lecturer ID:</label><br>
+                <input type="number" id="LID" name="LID" required><br><br>
+
+                <!-- Course ID -->
+                <label for="CID">course ID:</label><br>
+                <input type="text" id="CID" name="CID" required><br><br>
+                
+                <!-- Submit Button -->
+                <button type="button" class="button" onclick="lect_C()">Submit</button>
+            </form>
+        </div>
+
+        <!-- Table for courses with 50+ students -->
+        <table id="Std50Table" style="display: none;">
+            <caption style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Courses With 50+ Students</caption>
+            <!-- <h2>Courses List</h2> -->
+            <thead>
+                <tr>
+                    <th>Course ID</th>
+                    <th>Course Title</th>
+                    <th>Student Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+
+        <!-- Table for courses with 50+ students -->
+        <table id="Cse5Table" style="display: none;">
+            <caption style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Students With 5+ Courses</caption>
+            <!-- <h2>Courses List</h2> -->
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Course Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+
+        <table id="L3Table" style="display: none;">
+            <caption style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Lecturers With 3+ Courses</caption>
+            <!-- <h2>Courses List</h2> -->
+            <thead>
+                <tr>
+                    <th>Lecturer ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Course Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+
+        <!-- Table for courses with 50+ students -->
+        <table id="C10Table" style="display: none;">
+            <caption style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">10 Most Enrolled Courses</caption>
+            <!-- <h2>Courses List</h2> -->
+            <thead>
+                <tr>
+                    <th>Course ID</th>
+                    <th>Course Title</th>
+                    <th>Student Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+
+        <!-- Table for courses with 50+ students -->
+        <table id="S10Table" style="display: none;">
+            <caption style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Top 10 Students</caption>
+            <!-- <h2>Courses List</h2> -->
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Overall Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+        <script>
+            // ------------------------------------------JavaScript to show the registration form
+            function toggleCourseForm() {
+                const form = document.getElementById("courseForm");
+                if (form.style.display === "block") {
+                    form.style.display = "none";
+                } else {
+                    form.style.display = "block";
+                    document.getElementById('lectCourseForm').style.display = "none";
+                    document.getElementById('coursesTable').style.display = "none";
+                    document.getElementById("LCForm").style.display = "none";
+                    document.getElementById("Std50Table").style.display = "none";
+                    document.getElementById("Cse5Table").style.display = "none";
+                    document.getElementById("L3Table").style.display = "none";
+                    document.getElementById("C10Table").style.display = "none";
+                    document.getElementById("S10Table").style.display = "none";
+                }
+            }            
+            // Function to handle user registration
+            function registerCourse() {
+                const form = document.getElementById("courseFormElement");
+                const formData = new FormData(form);
+                // Send the POST request
+                fetch("/create_course", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => {
+                    // Check if the response status is 201 (success)
+                    if (response.status === 201) {
+                        return response.json(); // Parse the JSON response
+                    } else {
+                        // Handle errors (e.g., 400, 500)
+                        return response.json().then(data => {
+                            throw new Error(data.error || "An unknown error occurred");
+                        });
+                    }
+                })
+                .then(data => {
+                    // Display the message from the server
+                    alert(data.message); // Example: "Student added successfully, user ID is 123"
+                    // Hide the form after the user presses OK
+                    document.getElementById("courseForm").style.display = "none";
+                })
+                .catch(error => {
+                    // Handle errors and display the error message
+                    console.error("Error:", error);
+                    alert(error.message);
+                });
+            }
+
+            // --------------------------Get All Courses
+            function fetchCourses() {
+                // Fetch courses from the /get_courses route
+                fetch('/get_courses')
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json(); // Parse the JSON response
+                        } else {
+                            throw new Error('Failed to fetch courses');
+                        }
+                    })
+                    .then(data => {
+                        const table = document.getElementById('coursesTable');
+                        const tableBody = table.querySelector('tbody');
+                        tableBody.innerHTML = ''; // Clear any existing rows
+                        // Populate table with courses data
+                        data.forEach(course => {
+                            const row = `<tr>
+                                            <td>${course.Course_Id}</td>
+                                            <td>${course.C_Title}</td>
+                                         </tr>`;
+                            tableBody.innerHTML += row; // Add rows dynamically
+                        });
+                        // Show the table
+                        table.style.display = 'table';
+                    })
+                    .catch(error => {
+                        // Handle errors and display the error message
+                        console.error("Error:", error);
+                        alert(error.message);
+                    });
+            }
+
+            // --------------------------Get Lecturer Courses
+            function toggleLectCourseForm() {
+                const form = document.getElementById("lectCourseForm");
+                if (form.style.display === "block") {
+                    form.style.display = "none";
+                } else {
+                    form.style.display = "block";
+                    document.getElementById('courseForm').style.display = "none";
+                    document.getElementById('coursesTable').style.display = "none";
+                    document.getElementById("LCForm").style.display = "none";
+                    document.getElementById("Std50Table").style.display = "none";
+                    document.getElementById("Cse5Table").style.display = "none";
+                    document.getElementById("L3Table").style.display = "none";
+                    document.getElementById("C10Table").style.display = "none";
+                    document.getElementById("S10Table").style.display = "none";
+                }
+            } 
+            function lectCourse() {
+                // Fetch courses from the /get_courses route
+                const lecturerId = document.getElementById("LectID").value; // Get lecturer ID from input
+                if (!lecturerId) {
+                    alert("Please enter a valid Lecturer ID.");
+                    return;
+                }
+                // Fetch courses for the given lecturer ID
+                fetch(`/get_course_lecturer/${lecturerId}`)
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json(); // Parse the JSON response
+                        } else {
+                            throw new Error('Failed to fetch courses.');
+                        }
+                    })
+                    .then(data => {
+                        const table = document.getElementById('coursesTable');
+                        const tableBody = table.querySelector('tbody');
+                        tableBody.innerHTML = ''; // Clear any existing rows
+                        // Populate table with courses data
+                        data.forEach(course => {
+                            const row = `<tr>
+                                            <td>${course.Course_Id}</td>
+                                            <td>${course.C_Title}</td>
+                                         </tr>`;
+                            tableBody.innerHTML += row; // Add rows dynamically
+                        });
+                        // Show the table
+                        table.style.display = 'table';
+                    })
+                    .catch(error => {
+                        // Handle errors and display the error message
+                        console.error("Error:", error);
+                        alert(error.message);
+                    });
+            }
+
+            // ------------------------ Assign Lect To Course
+            function toggleLectForm() {
+                const form = document.getElementById("LCForm");
+                if (form.style.display === "block") {
+                    form.style.display = "none";
+                } else {
+                    form.style.display = "block";
+                    document.getElementById('courseForm').style.display = "none";
+                    document.getElementById('lectCourseForm').style.display = "none";
+                    document.getElementById('coursesTable').style.display = "none";
+                    document.getElementById("Std50Table").style.display = "none";
+                    document.getElementById("Cse5Table").style.display = "none";
+                    document.getElementById("L3Table").style.display = "none";
+                    document.getElementById("C10Table").style.display = "none";
+                    document.getElementById("S10Table").style.display = "none";
+                    
+                }
+            }
+            // Function to handle user registration
+            function lect_C() {
+                const form = document.getElementById("LCFormElement");
+                const formData = new FormData(form);
+                // Send the POST request
+                fetch("/register_course_lecturer", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => {
+                    // Check if the response status is 201 (success)
+                    if (response.status === 201) {
+                        return response.json(); // Parse the JSON response
+                    } else {
+                        // Handle errors (e.g., 400, 500)
+                        return response.json().then(data => {
+                            throw new Error(data.error || "An unknown error occurred");
+                        });
+                    }
+                })
+                .then(data => {
+                    // Display the message from the server
+                    alert(data.message); // Example: "Student added successfully, user ID is 123"
+                    // Hide the form after the user presses OK
+                    document.getElementById("LCForm").style.display = "none";
+                })
+                .catch(error => {
+                    // Handle errors and display the error message
+                    console.error("Error:", error);
+                    alert(error.message);
+                });
+            }
+
+
+            // --------------------------Get All Courses With 50+ Students
+            function fetchC50Table() {
+                // Fetch courses from the /get_courses route
+                fetch('/reports_courses_50plus')
+                    .then(response => {
+                        if (response.status === 200) {
+                            return response.json(); // Parse the JSON response
+                        } else {
+                            throw new Error('Failed to fetch courses');
+                        }
+                    })
+                    .then(data => {
+                        const table = document.getElementById('Std50Table');
+                        const tableBody = table.querySelector('tbody');
+                        tableBody.innerHTML = ''; // Clear any existing rows
+                        // Populate table with courses data
+                        data.forEach(course => {
+                            const row = `<tr>
+                                            <td>${course.courseId}</td>
+                                            <td>${course.courseTitle}</td>
+                                            <td>${course.studentCount}</td>
+                                         </tr>`;
+                            tableBody.innerHTML += row; // Add rows dynamically
+                        });
+                        // Show the table
+                        table.style.display = 'table';
+                    })
+                    .catch(error => {
+                        // Handle errors and display the error message
+                        console.error("Error:", error);
+                        alert(error.message);
+                    });
+            }
+
+            // --------------------------Get All Students With 5+ Courses
+            function fetchS5Table() {
+                // Fetch courses from the /get_courses route
+                fetch('/reports_students_5plus')
+                    .then(response => {
+                        if (response.status === 200) {
+                            return response.json(); // Parse the JSON response
+                        } else {
+                            throw new Error('Failed to fetch students');
+                        }
+                    })
+                    .then(data => {
+                        const table = document.getElementById('Cse5Table');
+                        const tableBody = table.querySelector('tbody');
+                        tableBody.innerHTML = ''; // Clear any existing rows
+                        // Populate table with courses data
+                        data.forEach(student => {
+                            const row = `<tr>
+                                            <td>${student.studentId}</td>
+                                            <td>${student.firstName}</td>
+                                            <td>${student.lastName}</td>
+                                            <td>${student.courseCount}</td>
+                                         </tr>`;
+                            tableBody.innerHTML += row; // Add rows dynamically
+                        });
+                        // Show the table
+                        table.style.display = 'table';
+                    })
+                    .catch(error => {
+                        // Handle errors and display the error message
+                        console.error("Error:", error);
+                        alert(error.message);
+                    });
+            }
+
+             // --------------------------Get All Lecturers With 3+ Courses
+             function fetchL3Table() {
+                // Fetch courses from the /get_courses route
+                fetch('/reports_lecturers_3plus')
+                    .then(response => {
+                        if (response.status === 200) {
+                            return response.json(); // Parse the JSON response
+                        } else {
+                            throw new Error('Failed to fetch lecturers');
+                        }
+                    })
+                    .then(data => {
+                        const table = document.getElementById('L3Table');
+                        const tableBody = table.querySelector('tbody');
+                        tableBody.innerHTML = ''; // Clear any existing rows
+                        // Populate table with courses data
+                        data.forEach(student => {
+                            const row = `<tr>
+                                            <td>${student.lectureId}</td>
+                                            <td>${student.firstName}</td>
+                                            <td>${student.lastName}</td>
+                                            <td>${student.courseCount}</td>
+                                         </tr>`;
+                            tableBody.innerHTML += row; // Add rows dynamically
+                        });
+                        // Show the table
+                        table.style.display = 'table';
+                    })
+                    .catch(error => {
+                        // Handle errors and display the error message
+                        console.error("Error:", error);
+                        alert(error.message);
+                    });
+            }
+
+            // --------------------------Get 10 Most Erolled Courses
+            function fetchC10Table() {
+                // Fetch courses from the /get_courses route
+                fetch('/reports_top10courses')
+                    .then(response => {
+                        if (response.status === 200) {
+                            return response.json(); // Parse the JSON response
+                        } else {
+                            throw new Error('Failed to fetch courses');
+                        }
+                    })
+                    .then(data => {
+                        const table = document.getElementById('C10Table');
+                        const tableBody = table.querySelector('tbody');
+                        tableBody.innerHTML = ''; // Clear any existing rows
+                        // Populate table with courses data
+                        data.forEach(course => {
+                            const row = `<tr>
+                                            <td>${course.courseID}</td>
+                                            <td>${course.courseTitle}</td>
+                                            <td>${course.studentCount}</td>
+                                         </tr>`;
+                            tableBody.innerHTML += row; // Add rows dynamically
+                        });
+                        // Show the table
+                        table.style.display = 'table';
+                    })
+                    .catch(error => {
+                        // Handle errors and display the error message
+                        console.error("Error:", error);
+                        alert(error.message);
+                    });
+            }
+
+            // --------------------------Get Top 10 Students
+            function fetchS10Table() {
+                // Fetch courses from the /get_courses route
+                fetch('/reports_top10students')
+                    .then(response => {
+                        if (response.status === 200) {
+                            return response.json(); // Parse the JSON response
+                        } else {
+                            throw new Error('Failed to fetch students');
+                        }
+                    })
+                    .then(data => {
+                        const table = document.getElementById('S10Table');
+                        const tableBody = table.querySelector('tbody');
+                        tableBody.innerHTML = ''; // Clear any existing rows
+                        // Populate table with courses data
+                        data.forEach(student => {
+                            const row = `<tr>
+                                            <td>${student.studentId}</td>
+                                            <td>${student.firstName}</td>
+                                            <td>${student.lastName}</td>
+                                            <td>${student.averageGrade}</td>
+                                         </tr>`;
+                            tableBody.innerHTML += row; // Add rows dynamically
+                        });
+                        // Show the table
+                        table.style.display = 'table';
+                    })
+                    .catch(error => {
+                        // Handle errors and display the error message
+                        console.error("Error:", error);
+                        alert(error.message);
+                    });
+            }
+        </script>
+    <!-- Import the footer -->
+    {% include 'footer.html' %}
+    </body>
+</html>
+-

@@ -1,0 +1,542 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgb(46, 84, 187);
+  text-align: center;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+html {
+  background-color: white
+}
+
+button {
+  background-color: rgb(46, 84, 187); /* Button color changed to blue */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: darkblue; /* Darker blue on hover */
+}
+
+/* Styling for the registration form */
+#registerForm {
+  display: none; /* Hide form by default */
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 5px;
+  width: 300px;
+  background-color: #f9f9f9;
+}
+
+#successMessage {
+  display: none;
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  border-radius: 5px;
+  width: 300px;
+}
+
+.show {
+  display: block;
+}
+.hide {
+  display: none;
+}
+
+/* Basic table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tr:hover {
+  background-color: #f1f1f1;
+}
+
+h1 {
+  text-align: center;
+  color: rgb(46, 84, 187);
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
+}
+
+#coursesTable {
+  display: none; /* Table is hidden by default */
+}
+
+/* ===================================
+   Assignment Styles
+=================================== */
+
+/* Assignment action buttons */
+#assignmentButtons {
+  margin-bottom: 20px;
+}
+
+#assignmentButtons .button {
+  background-color: rgb(46, 84, 187);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  margin: 5px;
+  cursor: pointer;
+}
+
+#assignmentButtons .button:hover {
+  background-color: darkblue;
+}
+
+/* Submit Assignment Form */
+#submitAssignmentForm {
+  display: none; /* Hidden by default */
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 5px;
+  width: 300px;
+  background-color: #f9f9f9;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+}
+
+/* Grade Assignment Form */
+#gradeAssignmentForm {
+  display: none; /* Hidden by default */
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 5px;
+  width: 300px;
+  background-color: #f9f9f9;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+}
+
+/* Form labels and inputs */
+#submitAssignmentForm label,
+#gradeAssignmentForm label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: rgb(46, 84, 187);
+}
+
+#submitAssignmentForm input,
+#submitAssignmentForm textarea,
+#gradeAssignmentForm input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+#submitAssignmentForm textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+
+/* ===================================
+   Calender Events Styles
+=================================== */
+
+
+/* Calendar Event buttons */
+#buttons button {
+  background-color: rgb(46, 84, 187);
+  color: white;
+  padding: 10px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#buttons button:hover {
+  background-color: darkblue;
+}
+
+/* Calendar Event Forms */
+#REBCForm,
+#REBDForm,
+#AEFormElement {
+  display: none;
+  margin: 20px auto;
+  padding: 20px;
+  width: 300px;
+  text-align: left;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+#REBCForm label,
+#REBDForm label,
+#AEFormElement label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+#REBCForm input,
+#REBDForm input,
+#AEFormElement input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+/* Calendar Event Tables */
+#REBCTable,
+#REBDTable {
+  display: none;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+#REBCTable th, #REBCTable td,
+#REBDTable th, #REBDTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+#REBCTable th, #REBDTable th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+#REBCTable tr:nth-child(even),
+#REBDTable tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+#REBCTable tr:hover,
+#REBDTable tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* ===================================
+   Course Content Styles
+=================================== */
+
+/* Content Buttons Container */
+#contentButtons {
+  text-align: center;
+  margin: 20px auto;
+}
+
+#contentButtons .button {
+  background-color: rgb(46, 84, 187);
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 8px;
+  font-size: 14px;
+}
+
+#contentButtons .button:hover {
+  background-color: darkblue;
+}
+
+/* Add & View Forms */
+#addContentForm,
+#viewContentForm {
+  margin: 20px auto;
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 5px;
+  width: 340px;
+  background-color: #f9f9f9;
+  display: none;
+  text-align: left;
+}
+
+#addContentForm h2,
+#viewContentForm h2 {
+  text-align: center;
+  color: rgb(46, 84, 187);
+}
+
+#addContentForm label,
+#viewContentForm label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+#addContentForm input,
+#viewContentForm input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+/* Submit buttons inside forms */
+#addContentForm .button,
+#viewContentForm .button {
+  width: 100%;
+}
+
+/* Course Content Display */
+#contentDisplay {
+  margin: 30px auto;
+  max-width: 700px;
+  padding: 20px;
+  border-radius: 5px;
+  background-color: #f4f4f4;
+  display: none;
+}
+
+#contentDisplay h2 {
+  text-align: center;
+  color: rgb(46, 84, 187);
+}
+
+#courseContentContainer div {
+  background-color: #fff;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+#courseContentContainer h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+#courseContentContainer ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+#courseContentContainer li {
+  margin: 5px 0;
+}
+
+#courseContentContainer a {
+  color: rgb(46, 84, 187);
+  text-decoration: underline;
+}
+
+/* ===================================
+   Forum Styles
+=================================== */
+
+/* Forum Buttons Container */
+#forumButtons {
+  text-align: center;
+  margin: 20px auto;
+}
+
+#forumButtons .button {
+  background-color: rgb(46, 84, 187);
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 8px;
+  font-size: 14px;
+}
+
+#forumButtons .button:hover {
+  background-color: darkblue;
+}
+
+/* Add Forum and View Forum Forms */
+#addForumForm, 
+#viewForumForm {
+  margin: 20px auto;
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 5px;
+  width: 320px;
+  background-color: #f9f9f9;
+  display: none;
+  text-align: left;
+}
+
+#addForumForm h2, 
+#viewForumForm h2 {
+  text-align: center;
+  color: rgb(46, 84, 187);
+}
+
+#addForumForm label,
+#viewForumForm label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+#addForumForm input,
+#viewForumForm input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+/* Submit buttons inside forms */
+#addForumForm .button,
+#viewForumForm .button {
+  width: 100%;
+}
+
+/* Forum Table */
+#forumTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 30px auto;
+  display: none;
+}
+
+#forumTable caption {
+  caption-side: top;
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: rgb(46, 84, 187);
+}
+
+#forumTable th,
+#forumTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+#forumTable th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+#forumTable tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+#forumTable tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* ===================================
+   Reports Styles 
+=================================== */
+
+/* Report Page Title */
+h2 {
+  text-align: center;
+  color: rgb(46, 84, 187);
+  margin-top: 30px;
+}
+
+/* Report Buttons Container */
+#reportButtons {
+  margin: 20px auto;
+  text-align: center;
+}
+
+#reportButtons .button {
+  background-color: rgb(46, 84, 187);
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 8px;
+  font-size: 14px;
+}
+
+#reportButtons .button:hover {
+  background-color: darkblue;
+}
+
+/* Report Table */
+#reportTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 30px auto;
+  display: none;
+}
+
+#reportTable caption {
+  caption-side: top;
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: rgb(46, 84, 187);
+}
+
+#reportTable th,
+#reportTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+#reportTable th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+#reportTable tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+#reportTable tr:hover {
+  background-color: #f1f1f1;
+}

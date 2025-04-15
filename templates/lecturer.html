@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>School Lecturer Webpage</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}" />
+    </head>
+    <body>
+        <!-- Buttons Section -->
+        <div id="buttons">
+            <button class="button" onclick="toggleStdCourseForm()">Get Student Courses</button>
+            <button class="button" onclick="toggleCseMembersForm()">Get Course Members</button>
+            <button class = "button" onclick = "toggleCEForm()">Get Calendar Events</button> <br><br>
+            <button class = "button" onclick = "toggleAEForm()">Add Calendar Events</button>
+            <button class = "button" onclick = "toggleaddForumForm()">Add Forum</button>
+            <button class = "button" onclick = "toggleAddTopicForm()">Add Course Topic</button> <br><br>
+            <button class = "button" onclick = "toggleAddContentForm()">Add Course Content</button>
+            <button class = "button" onclick = "toggleAddAssForm()">Add Assignment</button>
+            <button class="button" onclick="toggleGradeAssForm()">Grade Course Assignment</button> <br><br>
+            <button class="button" onclick="toggleCAForm()">Student Course Average</button> <br><br>
+        </div>
+
+        <!-- Form: Create Calendar Event Section -->
+         <div id="AEForm" style="display: none;">
+            <h2>Create Calendar Event for a Course</h2>
+            <form id="AEFormElement">
+                <!-- Course ID -->
+                <label for="courseID">Course ID:</label><br>
+                <input type="text" id="courseID" name="courseID" required><br><br>
+                <!-- Start Date -->
+                <label for="startDate">Start Date (YYYY-MM-DD):</label><br>
+                <input type="text" id="startDate" name="startDate" required><br><br>
+                <!-- End Date -->
+                <label for="endDate">End Date (YYYY-MM-DD):</label><br>
+                <input type="text" id="endDate" name="endDate" required><br><br>
+                <!-- Event Title -->
+                <label for="eventTitle">Event Title:</label><br>
+                <input type="text" id="eventTitle" name="eventTitle" required><br><br>
+                
+                <!-- Submit Button -->
+                <button type="button" class="button" onclick="createCalendarEvent()">Submit</button>
+            </form>
+        </div>
+
+        <!--Form: Add Assignment Form-->
+        <div id = "addAssForm" style = "display: none;">
+            <h2>Add Assignment</h2>
+            <form id = "addAssFormElement">
+                <!--Course ID-->
+                <label for = "AssCourseID">Course ID</label><br>
+                <input type = "text" id = "AssCourseID" name="AssCourseID" required><br><br>
+                <!--Forum Title-->
+                <label for = "AssTitle">Assignment Title</label><br>
+                <input type = "text" id = "AssTitle" name="AssTitle" required><br><br>
+
+                <!--Submit Button-->
+                <button type = "button" class = "button" onclick = "addAss()">Submit</button>
+            </form>
+        </div>
+
+        <div id="gradeAssForm" style="display: none;">
+            <h2>Grade Course Assignment</h2>
+            <form id="gradeAssFormElement">
+    
+                <label for="subStdID">Student ID:</label><br>
+                <input type="number" id="subStdID" name="subStdID" required><br><br>
+    
+                <label for="subAssID">Assignment ID:</label><br>
+                <input type="number" id="subAssID" name="subAssID" required><br><br>
+
+                <label for="grade">Assignment Grade:</label><br>
+                <input type="number" id="grade" name="grade" required><br><br>
+                
+                <button type="button" class="button" onclick="gradeAss()">Submit</button>
+            </form>
+        </div>
+
+        <!--Form: Get Average Form-->
+        <div id = "CAForm" style = "display: none;">
+            <h2>Student Course Average</h2>
+            <form id = "CAFormElement">
+                <!--Student ID-->
+                <label for = "CAStdID">Student ID</label><br>
+                <input type = "number" id = "CAStdID" name="CAStdID" required><br><br>
+                <!--Course ID-->
+                <label for = "CACourseID">Course ID</label><br>
+                <input type = "text" id = "CACourseID" name="CACourseID" required><br><br>
+
+                <!--Submit Button-->
+                <button type = "button" class = "button" onclick = "Course_Avg()">Submit</button>
+            </form>
+        </div>
+        <div id="averageResult">
+            <!-- The response will be displayed here -->
+        </div>
+
+        <!--Form: Add Forum Form-->
+        <div id = "addForumForm" style = "display: none;">
+            <h2>Create Forum</h2>
+            <form id = "addForumFormElement">
+                <!--Course ID-->
+                <label for = "forumCourseID">Course ID</label><br>
+                <input type = "text" id = "forumCourseID" name="forumCourseID" required><br><br>
+                <!--Forum Title-->
+                <label for = "forumTitle">Forum Title</label><br>
+                <input type = "text" id = "forumTitle" name="forumTitle" required><br><br>
+
+                <!--Submit Button-->
+                <button type = "button" class = "button" onclick = "addForum()">Submit</button>
+            </form>
+        </div>
+
+        <!--Form: Add Course Topic Form-->
+        <div id = "addTopicForm" style = "display: none;">
+            <h2>Add Course Topic</h2>
+            <form id = "addTopicFormElement">
+                <!-- Course ID -->
+                <label for = "contentCourseID">Course ID</label><br>
+                <input type = "text" id = "contentCourseID" name = "contentCourseID" required><br><br>
+                <!-- Topic Title -->
+                <label for = "topicTitle">Topic Title:</label><br>
+                <input type = "text" id = "topicTitle" name = "topicTitle" required><br><br>
+
+                <!--Submit-->
+                <button type = "button" class = "button" onclick = "addCourseTopic()">Submit</button>
+            </form>
+        </div>
+
+        <!--Form: Add Course Content Form-->
+        <div id = "addContentForm" style = "display: none;">
+            <h2>Add Course Content</h2>
+            <form id = "addContentFormElement">
+                <label for = "topicID">Topic ID:</label><br>
+                <input type = "number" id = "topicID" name = "topicID" required><br><br>
+                <!-- Link -->
+                <label for = "link">Link:</label><br>
+                <input type = "text" id = "link" name = "link"><br><br>
+                <!-- File Name -->
+                <label for = "file">File Name:</label><br>
+                <input type = "text" id = "file" name = "file"><br><br>
+                <!-- Slide -->
+                <label for = "slide">Slide Name:</label><br>
+                <input type = "text" id = "slide" name = "slide"><br><br>
+
+                <!--Submit-->
+                <button type = "button" class = "button" onclick = "addCourseContent()">Submit</button>
+            </form>
+        </div>
+
+        <!-- Std Course Form -->
+        <div id="stdCourseForm" style="display: none;">
+            <h2>Student Course Form</h2>
+            <form id="stdCourseFormElement">
+                <!-- Std ID -->
+                <label for="StdID">Student ID:</label><br>
+                <input type="number" id="StdID" name="StdID" required><br><br>
+                
+                <!-- Submit Button -->
+                <button type="button" class="button" onclick="stdCourse()">Submit</button>
+            </form>
+        </div>
+        <!-- Table for displaying courses -->
+        <table id="coursesTable" style="display: none;">
+            <caption style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Courses List</caption>
+            <!-- <h2>Courses List</h2> -->
+            <thead>
+                <tr>
+                    <th>Course ID</th>
+                    <th>Course Title</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+
+        <!-- Course Members Form -->
+        <div id="cseMembersForm" style="display: none;">
+            <h2>Course Members Form</h2>
+            <form id="cseMembersFormElement">
+                <!-- Std ID -->
+                <label for="CID">Course ID:</label><br>
+                <input type="text" id="CID" name="CID" required><br><br>
+                
+                <!-- Submit Button -->
+                <button type="button" class="button" onclick="cseMembers()">Submit</button>
+            </form>
+        </div>
+        <!-- Table for displaying course members -->
+        <table id="membersTable" style="display: none;">
+            <caption style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Course Members List</caption>
+            <!-- <h2>Courses List</h2> -->
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+
+        <!-- Calendar Events Form -->
+        <div id="CEForm" style="display: none;">
+            <h2>Calendar Events Form</h2>
+            <form id="CEFormElement">
+
+                <label for="CEID">Course ID:</label><br>
+                <input type="text" id="CEID" name="CEID" required><br><br>
+                
+                <!-- Submit Button -->
+                <button type="button" class="button" onclick="C_Events()">Submit</button>
+            </form>
+        </div>
+        <!-- Table for displaying course members -->
+        <table id="CETable" style="display: none;">
+            <caption style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Calendar Events List</caption>
+            <!-- <h2>Courses List</h2> -->
+            <thead>
+                <tr>
+                    <th>Event ID</th>
+                    <th>Course ID</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Event Title</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+        <script>
+            // --------------------------Get Students Courses
+            function toggleStdCourseForm() {
+                const form = document.getElementById("stdCourseForm");
+                if (form.style.display === "block") {
+                    form.style.display = "none";
+                } else {
+                    form.style.display = "block";
+                    document.getElementById("AEForm").style.display = "none";
+                    document.getElementById("addAssForm").style.display = "none";
+                    document.getElementById("gradeAssForm").style.display = "none";
+                    document.getElementById("CAForm").style.display = "none";
+                    document.getElementById("addForumForm").style.display = "none";
+                    document.getElementById("addTopicForm").style.display = "none";
+                    document.getElementById("addContentForm").style.display = "none";
+                    document.getElementById('coursesTable').style.display = "none";
+                    document.getElementById("cseMembersForm").style.display = "none";
+                    document.getElementById("membersTable").style.display = "none";
+                    document.getElementById("CEForm").style.display = "none";
+                    document.getElementById("CETable").style.display = "none";   
+                }
+            } 
+            function stdCourse() {
+                // Fetch courses from the /get_courses route
+                const StdID = document.getElementById("StdID").value; // Get lecturer ID from input
+                if (!StdID) {
+                    alert("Please enter a valid Student ID.");
+                    return;
+                }
+                // Fetch courses for the given lecturer ID
+                fetch(`/get_course_student/${StdID}`)
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json(); // Parse the JSON response
+                        } else {
+                            throw new Error('Failed to fetch courses.');
+                        }
+                    })
+                    .then(data => {
+                        const table = document.getElementById('coursesTable');
+                        const tableBody = table.querySelector('tbody');
+                        tableBody.innerHTML = ''; // Clear any existing rows
+                        // Populate table with courses data
+                        data.forEach(course => {
+                            const row = `<tr>
+                                            <td>${course.Course_Id}</td>
+                                            <td>${course.C_Title}</td>
+                                         </tr>`;
+                            tableBody.innerHTML += row; // Add rows dynamically
+                        });
+                        // Show the table
+                        table.style.display = 'table';
+                    })
+                    .catch(error => {
+                        // Handle errors and display the error message
+                        console.error("Error:", error);
+                        alert(error.message);
+                    });
+            }
+
+            function toggleCseMembersForm() {
+                const form = document.getElementById("cseMembersForm");
+                if (form.style.display === "block") {
+                    form.style.display = "none";
+                } else {
+                    form.style.display = "block";
+                    document.getElementById("stdCourseForm").style.display = "none";
+                    document.getElementById('coursesTable').style.display = "none";
+                    document.getElementById("CEForm").style.display = "none";
+                    document.getElementById("AEForm").style.display = "none";
+                }
+            } 
+            function cseMembers() {
+                const CID = document.getElementById("CID").value; // Get course ID from input
+                if (!CID) {
+                    alert("Please enter a valid Course ID.");
+                    return;
+                }
+                fetch(`/Enrols/${CID}`)
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json(); // Parse the JSON response
+                        } else {
+                            throw new Error('Failed to fetch members.');
+                        }
+                    })
+                    .then(data => {
+                        const table = document.getElementById('membersTable');
+                        const tableBody = table.querySelector('tbody');
+                        tableBody.innerHTML = ''; // Clear any existing rows
+                        data.forEach(member => {
+                            const row = `<tr>
+                                            <td>${member.userId}</td>
+                                            <td>${member.f_Name}</td>
+                                            <td>${member.l_Name}</td>
+                                            <td>${member.role}</td>
+                                         </tr>`;
+                            tableBody.innerHTML += row; // Add rows dynamically
+                        });
+                        table.style.display = 'table';
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        alert(error.message);
+                    });
+            }
+
+            function toggleCEForm() {
+                const form = document.getElementById("CEForm");
+                if (form.style.display === "block") {
+                    form.style.display = "none";
+                } else {
+                    form.style.display = "block";
+                    document.getElementById("AEForm").style.display = "none";
+                    document.getElementById("addAssForm").style.display = "none";
+                    document.getElementById("gradeAssForm").style.display = "none";
+                    document.getElementById("CAForm").style.display = "none";
+                    document.getElementById("addForumForm").style.display = "none";
+                    document.getElementById("addTopicForm").style.display = "none";
+                    document.getElementById("addContentForm").style.display = "none";
+                    document.getElementById("stdCourseForm").style.display = "none";
+                    document.getElementById('coursesTable').style.display = "none";
+                    document.getElementById("cseMembersForm").style.display = "none";
+                    document.getElementById("membersTable").style.display = "none";
+                    document.getElementById("CETable").style.display = "none";   
+                }
+            } 
+            function C_Events() {
+                const CEID = document.getElementById("CEID").value; // Get course ID from input
+                if (!CEID) {
+                    alert("Please enter a valid Course ID.");
+                    return;
+                }
+                fetch(`/Calendar_Events/${CEID}`)
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json(); // Parse the JSON response
+                        } else {
+                            throw new Error('Failed to fetch events.');
+                        }
+                    })
+                    .then(data => {
+                        const table = document.getElementById('CETable');
+                        const tableBody = table.querySelector('tbody');
+                        tableBody.innerHTML = ''; // Clear any existing rows
+                        data.forEach(event => {
+                            const row = `<tr>
+                                            <td>${event.Event_Id}</td>
+                                            <td>${event.Course_Id}</td>
+                                            <td>${event.Start_Date}</td>
+                                            <td>${event.End_Date}</td>
+                                            <td>${event.Event_Title}</td>
+                                         </tr>`;
+                            tableBody.innerHTML += row; // Add rows dynamically
+                        });
+                        table.style.display = 'table';
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        alert(error.message);
+                    });
+            }
+
+            //---------------------------Add Calendar Event
+            function toggleAEForm()
+            {
+                const form = document.getElementById("AEForm");
+                if (form.style.display === "block") {
+                    form.style.display = "none";
+                } else {
+                    form.style.display = "block";
+                    document.getElementById("addAssForm").style.display = "none";
+                    document.getElementById("gradeAssForm").style.display = "none";
+                    document.getElementById("CAForm").style.display = "none";
+                    document.getElementById("addForumForm").style.display = "none";
+                    document.getElementById("addTopicForm").style.display = "none";
+                    document.getElementById("addContentForm").style.display = "none";
+                    document.getElementById("stdCourseForm").style.display = "none";
+                    document.getElementById('coursesTable').style.display = "none";
+                    document.getElementById("cseMembersForm").style.display = "none";
+                    document.getElementById("membersTable").style.display = "none";
+                    document.getElementById("CEForm").style.display = "none";
+                    document.getElementById("CETable").style.display = "none";   
+                }
+            }
+            function createCalendarEvent() {
+                const form = document.getElementById("AEFormElement");
+                const formData = new FormData(form);
+                // Send the POST request
+                fetch("/add_event", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => {
+                    // Check if the response status is 201 (success)
+                    if (response.status === 200) {
+                        return response.json(); // Parse the JSON response
+                    } else {
+                        // Handle errors (e.g., 400, 500)
+                        return response.json().then(data => {
+                            throw new Error(data.error || "An unknown error occurred");
+                        });
+                    }
+                })
+                .then(data => {
+                    // Display the message from the server
+                    alert(data.message); // Example: "Student added successfully, user ID is 123"
+                    // Hide the form after the user presses OK
+                    document.getElementById("AEForm").style.display = "none";
+                })
+                .catch(error => {
+                    // Handle errors and display the error message
+                    console.error("Error:", error);
+                    alert(error.message);
+                });
+            }
+
+            function toggleaddForumForm()
+            {
+                const form = document.getElementById("addForumForm");
+                if (form.style.display === "block") {
+                    form.style.display = "none";
+                } else {
+                    form.style.display = "block";
+                    document.getElementById("AEForm").style.display = "none";
+                    document.getElementById("addAssForm").style.display = "none";
+                    document.getElementById("gradeAssForm").style.display = "none";
+                    document.getElementById("CAForm").style.display = "none";
+                    document.getElementById("addTopicForm").style.display = "none";
+                    document.getElementById("addContentForm").style.display = "none";
+                    document.getElementById("stdCourseForm").style.display = "none";
+                    document.getElementById('coursesTable').style.display = "none";
+                    document.getElementById("cseMembersForm").style.display = "none";
+                    document.getElementById("membersTable").style.display = "none";
+                    document.getElementById("CEForm").style.display = "none";
+                    document.getElementById("CETable").style.display = "none";   
+                }
+            }
+            function addForum() {
+                const form = document.getElementById("addForumFormElement");
+                const formData = new FormData(form);
+                // Send the POST request
+                fetch("/add_forum", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => {
+                    // Check if the response status is 201 (success)
+                    if (response.status === 200) {
+                        return response.json(); // Parse the JSON response
+                    } else {
+                        // Handle errors (e.g., 400, 500)
+                        return response.json().then(data => {
+                            throw new Error(data.error || "An unknown error occurred");
+                        });
+                    }
+                })
+                .then(data => {
+                    // Display the message from the server
+                    alert(data.message); // Example: "Student added successfully, user ID is 123"
+                    // Hide the form after the user presses OK
+                    document.getElementById("addForumForm").style.display = "none";
+                })
+                .catch(error => {
+                    // Handle errors and display the error message
+                    console.error("Error:", error);
+                    alert(error.message);
+                });
+            }
+
+            function toggleAddTopicForm()
+            {
+                const form = document.getElementById("addTopicForm");
+                if (form.style.display === "block") {
+                    form.style.display = "none";
+                } else {
+                    form.style.display = "block";
+                    document.getElementById("AEForm").style.display = "none";
+                    document.getElementById("addAssForm").style.display = "none";
+                    document.getElementById("gradeAssForm").style.display = "none";
+                    document.getElementById("CAForm").style.display = "none";
+                    document.getElementById("addForumForm").style.display = "none";
+                    document.getElementById("addContentForm").style.display = "none";
+                    document.getElementById("stdCourseForm").style.display = "none";
+                    document.getElementById('coursesTable').style.display = "none";
+                    document.getElementById("cseMembersForm").style.display = "none";
+                    document.getElementById("membersTable").style.display = "none";
+                    document.getElementById("CEForm").style.display = "none";
+                    document.getElementById("CETable").style.display = "none";   
+                }
+            }
+            function addCourseTopic() {
+                const form = document.getElementById("addTopicFormElement");
+                const formData = new FormData(form);
+                // Send the POST request
+                fetch("/add_topic", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => {
+                    // Check if the response status is 201 (success)
+                    if (response.status === 200) {
+                        return response.json(); // Parse the JSON response
+                    } else {
+                        // Handle errors (e.g., 400, 500)
+                        return response.json().then(data => {
+                            throw new Error(data.error || "An unknown error occurred");
+                        });
+                    }
+                })
+                .then(data => {
+                    // Display the message from the server
+                    alert(data.message); // Example: "Student added successfully, user ID is 123"
+                    // Hide the form after the user presses OK
+                    document.getElementById("addTopicForm").style.display = "none";
+                })
+                .catch(error => {
+                    // Handle errors and display the error message
+                    console.error("Error:", error);
+                    alert(error.message);
+                });
+            }
+
+            function toggleAddContentForm()
+            {
+                const form = document.getElementById("addContentForm");
+                if (form.style.display === "block") {
+                    form.style.display = "none";
+                } else {
+                    form.style.display = "block";
+                    document.getElementById("AEForm").style.display = "none";
+                    document.getElementById("addAssForm").style.display = "none";
+                    document.getElementById("gradeAssForm").style.display = "none";
+                    document.getElementById("CAForm").style.display = "none";
+                    document.getElementById("addForumForm").style.display = "none";
+                    document.getElementById("addTopicForm").style.display = "none";
+                    document.getElementById("stdCourseForm").style.display = "none";
+                    document.getElementById('coursesTable').style.display = "none";
+                    document.getElementById("cseMembersForm").style.display = "none";
+                    document.getElementById("membersTable").style.display = "none";
+                    document.getElementById("CEForm").style.display = "none";
+                    document.getElementById("CETable").style.display = "none";   
+                }
+            }
+            function addCourseContent() {
+                const form = document.getElementById("addContentFormElement");
+                const formData = new FormData(form);
+                // Send the POST request
+                fetch("/add_content", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => {
+                    // Check if the response status is 201 (success)
+                    if (response.status === 200) {
+                        return response.json(); // Parse the JSON response
+                    } else {
+                        // Handle errors (e.g., 400, 500)
+                        return response.json().then(data => {
+                            throw new Error(data.error || "An unknown error occurred");
+                        });
+                    }
+                })
+                .then(data => {
+                    // Display the message from the server
+                    alert(data.message); // Example: "Student added successfully, user ID is 123"
+                    // Hide the form after the user presses OK
+                    document.getElementById("addContentForm").style.display = "none";
+                })
+                .catch(error => {
+                    // Handle errors and display the error message
+                    console.error("Error:", error);
+                    alert(error.message);
+                });
+            }
+
+            function toggleAddAssForm()
+            {
+                const form = document.getElementById("addAssForm");
+                if (form.style.display === "block") {
+                    form.style.display = "none";
+                } else {
+                    form.style.display = "block";
+                    document.getElementById("AEForm").style.display = "none";
+                    document.getElementById("gradeAssForm").style.display = "none";
+                    document.getElementById("CAForm").style.display = "none";
+                    document.getElementById("addForumForm").style.display = "none";
+                    document.getElementById("addTopicForm").style.display = "none";
+                    document.getElementById("addContentForm").style.display = "none";
+                    document.getElementById("stdCourseForm").style.display = "none";
+                    document.getElementById('coursesTable').style.display = "none";
+                    document.getElementById("cseMembersForm").style.display = "none";
+                    document.getElementById("membersTable").style.display = "none";
+                    document.getElementById("CEForm").style.display = "none";
+                    document.getElementById("CETable").style.display = "none";   
+                }
+            }
+            function addAss() {
+                const form = document.getElementById("addAssFormElement");
+                const formData = new FormData(form);
+                // Send the POST request
+                fetch("/add_assignment", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => {
+                    // Check if the response status is 201 (success)
+                    if (response.status === 200) {
+                        return response.json(); // Parse the JSON response
+                    } else {
+                        // Handle errors (e.g., 400, 500)
+                        return response.json().then(data => {
+                            throw new Error(data.error || "An unknown error occurred");
+                        });
+                    }
+                })
+                .then(data => {
+                    // Display the message from the server
+                    alert(data.message); // Example: "Student added successfully, user ID is 123"
+                    // Hide the form after the user presses OK
+                    document.getElementById("addAssForm").style.display = "none";
+                })
+                .catch(error => {
+                    // Handle errors and display the error message
+                    console.error("Error:", error);
+                    alert(error.message);
+                });
+            }
+
+            function toggleGradeAssForm()
+            {
+                const form = document.getElementById("gradeAssForm");
+                if (form.style.display === "block") {
+                    form.style.display = "none";
+                } else {
+                    form.style.display = "block";
+                    document.getElementById("AEForm").style.display = "none";
+                    document.getElementById("addAssForm").style.display = "none";
+                    document.getElementById("CAForm").style.display = "none";
+                    document.getElementById("addForumForm").style.display = "none";
+                    document.getElementById("addTopicForm").style.display = "none";
+                    document.getElementById("addContentForm").style.display = "none";
+                    document.getElementById("stdCourseForm").style.display = "none";
+                    document.getElementById('coursesTable').style.display = "none";
+                    document.getElementById("cseMembersForm").style.display = "none";
+                    document.getElementById("membersTable").style.display = "none";
+                    document.getElementById("CEForm").style.display = "none";
+                    document.getElementById("CETable").style.display = "none";   
+                }
+            }
+            function gradeAss() {
+                const form = document.getElementById("gradeAssFormElement");
+                const formData = new FormData(form);
+                // Send the POST request
+                fetch("/grade_assignment", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => {
+                    // Check if the response status is 201 (success)
+                    if (response.status === 200) {
+                        return response.json(); // Parse the JSON response
+                    } else {
+                        // Handle errors (e.g., 400, 500)
+                        return response.json().then(data => {
+                            throw new Error(data.error || "An unknown error occurred");
+                        });
+                    }
+                })
+                .then(data => {
+                    // Display the message from the server
+                    alert(data.message); // Example: "Student added successfully, user ID is 123"
+                    // Hide the form after the user presses OK
+                    document.getElementById("gradeAssForm").style.display = "none";
+                })
+                .catch(error => {
+                    // Handle errors and display the error message
+                    console.error("Error:", error);
+                    alert(error.message);
+                });
+            }
+
+            function toggleCAForm()
+            {
+                const form = document.getElementById("CAForm");
+                if (form.style.display === "block") {
+                    form.style.display = "none";
+                } else {
+                    form.style.display = "block";
+                    document.getElementById("AEForm").style.display = "none";
+                    document.getElementById("addAssForm").style.display = "none";
+                    document.getElementById("gradeAssForm").style.display = "none";
+                    document.getElementById("addForumForm").style.display = "none";
+                    document.getElementById("addTopicForm").style.display = "none";
+                    document.getElementById("addContentForm").style.display = "none";
+                    document.getElementById("stdCourseForm").style.display = "none";
+                    document.getElementById('coursesTable').style.display = "none";
+                    document.getElementById("cseMembersForm").style.display = "none";
+                    document.getElementById("membersTable").style.display = "none";
+                    document.getElementById("CEForm").style.display = "none";
+                    document.getElementById("CETable").style.display = "none";   
+                }
+            }
+            function Course_Avg() {
+                // Get input values from the form
+                const studentId = document.getElementById("CAStdID").value;
+                const courseId = document.getElementById("CACourseID").value;
+                // Validate inputs
+                if (!studentId || !courseId) {
+                    alert("Please provide both Student ID and Course ID.");
+                    return;
+                }
+                // Create the payload for the POST request
+                const payload = {
+                    Std_Id: studentId,
+                    Course_Id: courseId
+                };
+                // Make the POST request to the backend
+                fetch("/student_course_average", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded" // Backend expects `request.form`
+                    },
+                    body: new URLSearchParams(payload).toString() // Encode payload as `x-www-form-urlencoded`
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json(); // Parse the JSON response if successful
+                    } else {
+                        return response.json().then(data => {
+                            throw new Error(data.message || "An unknown error occurred");
+                        });
+                    }
+                })
+                .then(data => {
+                    // Update the UI with the response data
+                    const resultDiv = document.getElementById("averageResult");
+                    resultDiv.innerHTML = `
+                        <p><strong>Student ID:</strong> ${data.student_id}</p>
+                        <p><strong>Course ID:</strong> ${data.course_id}</p>
+                        <p><strong>Average Course Grade:</strong> ${data.average_grade}</p>
+                    `;
+                })
+                .catch(error => {
+                    // Display the error message
+                    const resultDiv = document.getElementById("averageResult");
+                    resultDiv.innerHTML = `
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    `;
+                    console.error("Error fetching average grade:", error);
+                });
+            }            
+        </script>
+    <!-- Import the footer -->
+    {% include 'footer.html' %}
+    </body>
+</html>
+-
