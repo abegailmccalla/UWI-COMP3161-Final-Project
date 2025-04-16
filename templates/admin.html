@@ -360,6 +360,13 @@
             // --------------------------Get All Courses With 50+ Students
             function fetchC50Table() {
                 // Fetch courses from the /get_courses route
+                const table = document.getElementById('Std50Table');
+                // Check if the table is currently visible
+                if (table.style.display === 'table') {
+                    // Hide the table if it is already visible
+                    table.style.display = 'none';
+                    return; // Exit the function
+                }
                 fetch('/reports_courses_50plus')
                     .then(response => {
                         if (response.status === 200) {
@@ -369,7 +376,6 @@
                         }
                     })
                     .then(data => {
-                        const table = document.getElementById('Std50Table');
                         const tableBody = table.querySelector('tbody');
                         tableBody.innerHTML = ''; // Clear any existing rows
                         // Populate table with courses data
@@ -394,6 +400,13 @@
             // --------------------------Get All Students With 5+ Courses
             function fetchS5Table() {
                 // Fetch courses from the /get_courses route
+                const table = document.getElementById('Cse5Table');
+                // Check if the table is currently visible
+                if (table.style.display === 'table') {
+                    // Hide the table if it is already visible
+                    table.style.display = 'none';
+                    return; // Exit the function
+                }
                 fetch('/reports_students_5plus')
                     .then(response => {
                         if (response.status === 200) {
@@ -403,7 +416,6 @@
                         }
                     })
                     .then(data => {
-                        const table = document.getElementById('Cse5Table');
                         const tableBody = table.querySelector('tbody');
                         tableBody.innerHTML = ''; // Clear any existing rows
                         // Populate table with courses data
@@ -429,6 +441,13 @@
              // --------------------------Get All Lecturers With 3+ Courses
              function fetchL3Table() {
                 // Fetch courses from the /get_courses route
+                const table = document.getElementById('L3Table');
+                // Check if the table is currently visible
+                if (table.style.display === 'table') {
+                    // Hide the table if it is already visible
+                    table.style.display = 'none';
+                    return; // Exit the function
+                }
                 fetch('/reports_lecturers_3plus')
                     .then(response => {
                         if (response.status === 200) {
@@ -438,7 +457,6 @@
                         }
                     })
                     .then(data => {
-                        const table = document.getElementById('L3Table');
                         const tableBody = table.querySelector('tbody');
                         tableBody.innerHTML = ''; // Clear any existing rows
                         // Populate table with courses data
@@ -464,6 +482,13 @@
             // --------------------------Get 10 Most Erolled Courses
             function fetchC10Table() {
                 // Fetch courses from the /get_courses route
+                const table = document.getElementById('C10Table');
+                // Check if the table is currently visible
+                if (table.style.display === 'table') {
+                    // Hide the table if it is already visible
+                    table.style.display = 'none';
+                    return; // Exit the function
+                }
                 fetch('/reports_top10courses')
                     .then(response => {
                         if (response.status === 200) {
@@ -473,7 +498,6 @@
                         }
                     })
                     .then(data => {
-                        const table = document.getElementById('C10Table');
                         const tableBody = table.querySelector('tbody');
                         tableBody.innerHTML = ''; // Clear any existing rows
                         // Populate table with courses data
@@ -498,6 +522,13 @@
             // --------------------------Get Top 10 Students
             function fetchS10Table() {
                 // Fetch courses from the /get_courses route
+                const table = document.getElementById('S10Table');
+                // Check if the table is currently visible
+                if (table.style.display === 'table') {
+                    // Hide the table if it is already visible
+                    table.style.display = 'none';
+                    return; // Exit the function
+                }
                 fetch('/reports_top10students')
                     .then(response => {
                         if (response.status === 200) {
@@ -507,7 +538,6 @@
                         }
                     })
                     .then(data => {
-                        const table = document.getElementById('S10Table');
                         const tableBody = table.querySelector('tbody');
                         tableBody.innerHTML = ''; // Clear any existing rows
                         // Populate table with courses data

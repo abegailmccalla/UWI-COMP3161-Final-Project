@@ -1,4 +1,4 @@
-from flask import Flask, redirect, request, make_response,jsonify,render_template, url_for
+from flask import Flask, redirect, request, flash, make_response,jsonify,render_template, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 from mysql.connector import Error
@@ -9,6 +9,9 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 # Connect to the MySQL database
+# mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
+# mysql.connector.connect(host="localhost", user="UWICOMP3161_Test", password="UWICOMP3161", database="school_test")
+db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
 
 @app.route('/')
 def home():
@@ -37,7 +40,6 @@ def page_not_found(error):
 @app.route('/register_user', methods=['POST'])
 def add_user():
     try:
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
         data = request.form # request.get_json()
         first_name = data.get('fname')
@@ -71,13 +73,11 @@ def add_user():
         return make_response(jsonify({'error': str(e)}), 500)
     finally:
         cursor.close()
-        db.close()
 
 # Login by a user 
 @app.route('/login', methods=['POST'])
 def login():
     try:
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor(dictionary=True)
         data = request.form
         userID = data.get('userID')
@@ -101,13 +101,11 @@ def login():
         return make_response(jsonify({'error': str(e)}), 500)
     finally:
         cursor.close()
-        db.close()
 
 #Create a course by Admin
 @app.route('/create_course', methods=['POST'])
 def newCourse():
     try:
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
         data = request.form
         courseID = data["courseID"]
@@ -117,8 +115,6 @@ def newCourse():
         cursor.execute("SELECT * FROM Admin WHERE Admin_Id = %s", (adminID,))
         admin = cursor.fetchone()
         if not admin:
-            cursor.close()
-            db.close()
             return make_response(jsonify({'error': 'Unauthorized. Only admins can create a course.'}), 403)
         cursor.execute("""
             INSERT INTO Course (Course_Id, C_Title)
@@ -129,35 +125,29 @@ def newCourse():
             VALUES (%s, %s)
         """, (adminID, courseID))
         db.commit()
-        cursor.close()
-        db.close()
         return make_response(jsonify({'message': f"Course {courseID} created successfully"}), 201)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 500)
+    finally:
+        cursor.close()
 
 #Get all courses on the system
 @app.route('/get_courses', methods=['GET'])
 def get_all_courses():
     try:
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor(dictionary = True)
         cursor.execute("SELECT Course_Id, C_Title FROM Course")
         course_list = cursor.fetchall()
-        cursor.close()
-        db.close()
         return make_response(jsonify(course_list), 200)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 500)
+    finally:
+        cursor.close()
 
 #Get courses by Lecturer ID
 @app.route('/get_course_lecturer/<int:id>', methods=['GET'])
 def get_lecturer_courses(id):
     try:
-       db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
        cursor = db.cursor(dictionary = True)
        cursor.execute("""SELECT c.Course_Id, c.C_Title 
                          FROM Teaches t
@@ -165,18 +155,15 @@ def get_lecturer_courses(id):
                       WHERE t.Lect_Id = %s   
                       """,(id,))
        course_list = cursor.fetchall()
-       cursor.close()
-       db.close()
        return make_response(jsonify(course_list), 200)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 500)
+    finally:
+        cursor.close()
 
 @app.route('/get_course_student/<int:id>', methods=['GET'])
 def get_student_courses(id):
     try:
-       db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
        cursor = db.cursor(dictionary = True)
        # --- Get Lecturer for the course ---
        cursor.execute("""SELECT c.Course_Id, c.C_Title 
@@ -185,19 +172,16 @@ def get_student_courses(id):
                       WHERE e.Std_Id = %s"""
                       ,(id,))
        course_list = cursor.fetchall()
-       cursor.close()
-       db.close()
        return make_response(jsonify(course_list), 200)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 500)
+    finally:
+        cursor.close()
 
 #Register a Student for a course
 @app.route('/register_course_student', methods=['POST'])
 def register():
     try:
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
         data = request.form
         student_id = data['SID'] #get from session in frontend
@@ -206,23 +190,17 @@ def register():
         cursor.execute("SELECT * FROM Course WHERE Course_Id = %s", (course_id,))
         course = cursor.fetchone()
         if not course:
-            cursor.close()
-            db.close()
             return make_response(jsonify({'error': 'Course not found'}), 404)
         # Check if student exists
         cursor.execute("SELECT * FROM Student WHERE Std_Id = %s", (student_id,))
         student = cursor.fetchone()
         if not student:
-            cursor.close()
-            db.close()
             return make_response(jsonify({'error': 'Student not found'}), 404)
         # Check if already enrolled
         cursor.execute("""
             SELECT * FROM Enrols WHERE Std_Id = %s AND Course_Id = %s
         """, (student_id, course_id))
         if cursor.fetchone():
-            cursor.close()
-            db.close()
             return make_response(jsonify({'error': 'Student already enrolled in this course'}), 400)
         # Check if student does max of 6 course
         cursor.execute(""" SELECT COUNT(Std_id)
@@ -230,8 +208,6 @@ def register():
                            WHERE Std_Id = %s""" ,(student_id,))
         count = cursor.fetchone()[0]
         if count >= 6:
-            cursor.close()
-            db.close()
             return make_response(jsonify({'error': 'Student already does 6 courses.'}), 400)
         else:
             # Register student for course
@@ -240,19 +216,16 @@ def register():
                 VALUES (%s, %s)
             """, (student_id, course_id))
             db.commit()
-        cursor.close()
-        db.close()
         return make_response(jsonify({'message': f"Student registered successfully for {course_id}"}), 201)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 500)
+    finally:
+        cursor.close()
 
 #Assign a Lecturer to teach a course (Remember that each lecturer already teaches 5 when you are testing)
 @app.route('/register_course_lecturer', methods=['POST'])
 def teach():
     try:
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
         data = request.form #get_json()
         lecturer_id = data['LID'] #get from session in frontend
@@ -261,23 +234,17 @@ def teach():
         cursor.execute("SELECT * FROM Course WHERE Course_Id = %s", (course_id,))
         course = cursor.fetchone()
         if not course:
-            cursor.close()
-            db.close()
             return make_response(jsonify({'error': 'Course not found'}), 404)
         # Check if lecturer exists
         cursor.execute("SELECT * FROM Lecturer WHERE Lect_Id = %s", (lecturer_id,))
         lecturer = cursor.fetchone()
         if not lecturer:
-            cursor.close()
-            db.close()
             return make_response(jsonify({'error': 'Lecturer not found'}), 404)
         # Check if already teaches
         cursor.execute("""
             SELECT * FROM Teaches WHERE Lect_Id = %s AND Course_Id = %s
         """, (lecturer_id, course_id))
         if cursor.fetchone():
-            cursor.close()
-            db.close()
             return make_response(jsonify({'error': 'Lecturer already teaches in this course'}), 400)
         # Check if lecturer teaches max of 5 course
         cursor.execute(""" SELECT COUNT(Lect_Id)
@@ -285,8 +252,6 @@ def teach():
                            WHERE Lect_Id = %s""" ,(lecturer_id,))
         count = cursor.fetchone()[0]
         if count >= 5:
-            cursor.close()
-            db.close()
             return make_response(jsonify({'error': 'Lecturer already teaches 5 courses.'}), 400)
         else:
             # Check if course already has a lecturer
@@ -308,18 +273,15 @@ def teach():
                     VALUES (%s, %s)
                 """, (lecturer_id, course_id))
             db.commit()
-        cursor.close()
-        db.close()
         return make_response(jsonify({'message': f"Lecturer assigned successfully to course {course_id}"}), 201)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 500)
+    finally:
+        cursor.close()
 
 @app.route('/Enrols/<Course_Id>', methods=['GET'])
 def get_members_by_Course_Id(Course_Id):
     try:
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
         members = []
         # --- Get Lecturer for the course ---
@@ -356,18 +318,15 @@ def get_members_by_Course_Id(Course_Id):
                 "l_Name": l_name,
                 "role": role
             })
-        cursor.close()
-        db.close()
         return make_response(jsonify(members), 200)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 400)
+    finally:
+        cursor.close()
    
 @app.route('/Calendar_Events/<Course_Id>', methods = ['GET'])
 def get_events_by_course_Id(Course_Id):
     try: 
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
         cursor.execute ('SELECT Event_Id, Course_Id, Start_Date, End_Date, Event_Title FROM Events WHERE Course_Id =%s;',(Course_Id,))
         lst_event = []
@@ -379,18 +338,15 @@ def get_events_by_course_Id(Course_Id):
             event['End_Date'] = end
             event['Event_Title'] = event_title
             lst_event.append(event)
-        cursor.close()
-        db.close()
         return make_response(jsonify(lst_event), 200)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error':str(e)}),400)
+    finally:
+        cursor.close()
     
 @app.route('/Calendar_Events/<Student_Id>/<Date>', methods = ['GET'])
 def get_events_by_student_id(Student_Id, Date):
     try: 
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
         cursor.execute(""" 
             SELECT cal.Event_Id, cal.Course_Id, c.C_Title, cal.Start_Date, cal.End_Date, cal.Event_Title
@@ -410,18 +366,15 @@ def get_events_by_student_id(Student_Id, Date):
             s_event['End_Date'] = end_date
             s_event['Event_Title'] = event_title
             events.append(s_event)
-        cursor.close()
-        db.close()
         return make_response(events, 200)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response({'error':str(e)},400)
+    finally:
+        cursor.close()
     
 @app.route('/add_event', methods = ['POST'])
 def add_event():
     try: 
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
         content = request.form #get_json()
         id = content['courseID']
@@ -432,36 +385,27 @@ def add_event():
         cursor.execute("SELECT * FROM Course WHERE Course_Id = %s", (id,))
         course = cursor.fetchone()
         if not course:
-            cursor.close()
-            db.close()
             return make_response(jsonify({'error': 'Course not found'}), 404)
         # Check if event already exists 
         cursor.execute("SELECT * FROM Events WHERE Start_Date = %s AND End_Date = %s AND Course_Id = %s", (start, end, id))
         event = cursor.fetchone()
         if event:
-            cursor.close()
-            db.close()
             return make_response(jsonify({'error': 'Event already exists'}), 400)
         cursor.execute("INSERT INTO Events (Start_Date, End_Date, Course_Id, Event_Title) Values (%s, %s, %s, %s);",(start,end,id,title))
         db.commit()
-        cursor.close()
-        db.close()
         return make_response(jsonify({'message': f"'{title}' added for course {id}"}), 200)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 400)
+    finally:
+        cursor.close()
     
 @app.route('/forums/<Course_Id>', methods = ['GET'])
 def get_forums(Course_Id):
     try: 
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
          # Check if course exists
         cursor.execute("SELECT 1 FROM Course WHERE Course_Id = %s", (Course_Id,))
         if cursor.fetchone() is None:
-            cursor.close()
-            db.close()
             return make_response({'error': f"Course '{Course_Id}' does not exist"}, 404)
         cursor.execute ("SELECT * FROM Discussion_Forum WHERE Course_Id = %s;",(Course_Id,))
         forums = []
@@ -471,18 +415,15 @@ def get_forums(Course_Id):
             forum["courseID"] = c_id
             forum["title"] = title
             forums.append(forum)
-        cursor.close()
-        db.close()
         return make_response(forums, 200)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response({'error':str(e)},400)
+    finally:
+        cursor.close()
     
 @app.route('/add_forum', methods=['POST'])
 def add_forum():
     try:
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
         data = request.form
         course_id = data['forumCourseID']
@@ -490,8 +431,6 @@ def add_forum():
         # Check if course exists
         cursor.execute("SELECT 1 FROM Course WHERE Course_Id = %s", (course_id,))
         if cursor.fetchone() is None:
-            cursor.close()
-            db.close()
             return make_response(jsonify({'error': f"Course '{course_id}' does not exist"}), 404)
         # Insert new forum
         cursor.execute("""
@@ -499,33 +438,27 @@ def add_forum():
             VALUES (%s, %s)
         """, (course_id, title))
         db.commit()
-        cursor.close()
-        db.close()
         return make_response(jsonify({'message': f"'{title}' Added Successfully"}), 200)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 400)
+    finally:
+        cursor.close()
 
 @app.route('/see_threads/<int:Forum_Id>', methods=['GET'])
 def get_threads(Forum_Id):
     try:
-       db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
        cursor = db.cursor(dictionary = True)
        cursor.execute("SELECT * FROM Discussion_Thread WHERE Forum_Id = %s;", (Forum_Id,))
        forums = cursor.fetchall()
-       cursor.close()
-       db.close()
        return make_response(jsonify(forums), 200)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 500)
+    finally:
+        cursor.close()
     
 @app.route('/create_threads', methods = ['POST'])
 def create_threads():
     try: 
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
         data = request.form # request.get_json()
         FID = data.get('FID')
@@ -533,26 +466,21 @@ def create_threads():
         CTdte = data.get('CTdte')
         cursor.execute("SELECT 1 FROM Discussion_Forum WHERE Forum_Id = %s", (FID,))
         if cursor.fetchone() is None:
-            cursor.close()
-            db.close()
             return make_response({'error': f"Forum '{FID}' does not exist"}, 404)
         cursor.execute("""
             INSERT INTO Discussion_Thread (Forum_Id, Thread_Title, date)
             VALUES (%s, %s, %s)
         """, (FID, CTtitle, CTdte))
         db.commit()
-        cursor.close()
-        db.close()
         return make_response(jsonify({'message': "Thread added successfully"}), 201)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 500)
+    finally:
+        cursor.close()
 
 @app.route('/reply_threads', methods = ['POST'])
 def reply_threads():
     try: 
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
         data = request.form # request.get_json()
         TID = data.get('TID')
@@ -560,10 +488,7 @@ def reply_threads():
         RTdte = data.get('RTdte')
         cursor.execute("SELECT Forum_Id FROM Discussion_Thread WHERE Thread_Id = %s", (TID,))
         result = cursor.fetchone()
-        print(result)
         if result is None:
-            cursor.close()
-            db.close()
             return make_response({'error': f"Thread '{TID}' does not exist"}, 404)
         FID = result[0]  # Extract the Forum_Id from the query result
         ReplyTitle = f"Reply To Thread {TID}: {RTtitle}"
@@ -572,18 +497,15 @@ def reply_threads():
             VALUES (%s, %s, %s)
         """, (FID, ReplyTitle, RTdte))
         db.commit()
-        cursor.close()
-        db.close()
         return make_response(jsonify({'message': "Thread added successfully"}), 201)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 500)  
+    finally:
+        cursor.close()
 
 @app.route('/add_topic', methods = ['POST'])
 def add_topic():
     try: 
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
         content= request.form
         course_id = content.get("contentCourseID")
@@ -591,33 +513,26 @@ def add_topic():
         cursor.execute("SELECT * FROM Course WHERE Course_Id = %s", (course_id,))
         course = cursor.fetchone() 
         if not course:
-            cursor.close()
-            db.close()
             return make_response(jsonify({'error': 'Course not found'}), 404)
         # Insert into Topic
         cursor.execute("INSERT INTO Topic (Course_Id, Topic_Title) VALUES (%s, %s);", (course_id, topic_title))
         topic_id = cursor.lastrowid
         db.commit()
-        cursor.close()
-        db.close()
         return make_response(jsonify({'message': f"Topic {topic_id} Added"}), 200)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 400)
+    finally:
+        cursor.close()
 
 @app.route('/add_content', methods = ['POST'])
 def add_content():
     try: 
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
         content= request.form
         topic_id = content.get("topicID")
         cursor.execute("SELECT * FROM Topic WHERE Topic_Id = %s", (topic_id,))
         course = cursor.fetchone() 
         if not course:
-            cursor.close()
-            db.close()
             return make_response(jsonify({'error': 'Course not found'}), 404)
         link = content.get("link")
         file = content.get("file")
@@ -629,24 +544,19 @@ def add_content():
         """, (topic_id, link, file, slide))
         content_id = cursor.lastrowid
         db.commit()
-        cursor.close()
-        db.close()
         return make_response(jsonify({'message': f"Content {content_id} Added"}), 200)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 400)
+    finally:
+        cursor.close()
 
 @app.route('/course_content/<course_id>', methods = ['GET'])
 def get_course_content(course_id):
     try: 
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
          # Check if course exists
         cursor.execute("SELECT 1 FROM Course WHERE Course_Id = %s", (course_id,))
         if cursor.fetchone() is None:
-            cursor.close()
-            db.close()
             return make_response(jsonify({'error': f"Course '{course_id}' does not exist"}), 404)
         cursor.execute( """SELECT t.Topic_Id, t.Topic_Title, c.Content_Id, c.link, c.file, c.slide
                        FROM Content c
@@ -663,18 +573,15 @@ def get_course_content(course_id):
             content["file"] = file
             content["slide"] = slide
             C_content.append(content)
-        cursor.close()
-        db.close()
         return make_response(jsonify(C_content), 200)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error':str(e)}),400)
+    finally:
+        cursor.close()
     
 @app.route("/add_assignment",methods=['POST'])
 def add_Assigments():
     try:
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
         data = request.form
         c_id = data.get("AssCourseID")
@@ -682,24 +589,19 @@ def add_Assigments():
         cursor.execute("""INSERT INTO Assignment (Course_Id, Assign_Title)
             VALUES (%s, %s)""", (c_id, ass_title))
         db.commit()
-        cursor.close()
-        db.close()
         return make_response(jsonify({'message': 'Assignment submitted successfully'}), 200)
     except Exception as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 500)
+    finally:
+        cursor.close()
 
 @app.route("/see_assignment/<course_id>",methods=['GET'])
 def see_Assigments(course_id):
     try: 
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
          # Check if course exists
         cursor.execute("SELECT 1 FROM Course WHERE Course_Id = %s", (course_id,))
         if cursor.fetchone() is None:
-            cursor.close()
-            db.close()
             return make_response(jsonify({'error': f"Course '{course_id}' does not exist"}), 404)
         cursor.execute("""SELECT Assign_Id, Assign_Title 
                        FROM Assignment
@@ -710,13 +612,11 @@ def see_Assigments(course_id):
             assign["Assign_Id"] = ass_id
             assign["Assign_Title"] = ass_title
             C_assign.append(assign)
-        cursor.close()
-        db.close()
         return make_response(jsonify(C_assign), 200)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error':str(e)}),400)
+    finally:
+        cursor.close()
 
 from datetime import datetime
 #Submit assignments
@@ -724,7 +624,6 @@ from datetime import datetime
 @app.route("/submit_assignment",methods=['POST'])
 def submit_Assigments():
      try:
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
         data = request.form
         student_id = data.get('subStdID')
@@ -733,18 +632,15 @@ def submit_Assigments():
         submission_file = data.get('subFile')
         cursor.execute("""INSERT INTO Submits (Std_Id, Assign_Id, Assign_grade, submit_time, submission)
             VALUES (%s, %s, %s,%s,%s)""", (student_id, assign_id, None, submit_time, submission_file))
-        cursor.close()
-        db.close()
         return make_response(jsonify({'message': 'Assignment submitted successfully'}), 201)
      except Exception as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 500)
+     finally:
+        cursor.close()
 
 @app.route("/grade_assignment", methods=['POST'])
 def grade_Assignments():
     try:
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
         data = request.form
         student_id = data.get("subStdID")
@@ -755,21 +651,16 @@ def grade_Assignments():
                        """,(grade, assign_id, student_id))
         db.commit()
         if cursor.rowcount == 0:
-            cursor.close()
-            db.close()
             return make_response(jsonify({'error': 'Submission not found'}), 404)
-        cursor.close()
-        db.close()
         return make_response(jsonify({'message': 'Grade added successfully'}), 200)
     except Exception as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 500)
+    finally:
+        cursor.close()
 
 @app.route("/student_course_average", methods=['POST'])
 def get_student_average():
     try:
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
         data = request.form
         student_id = data.get('Std_Id')
@@ -782,28 +673,30 @@ def get_student_average():
         """,(course_id, student_id))
         submissions = cursor.fetchall()
         if not submissions:
-            cursor.close()
-            db.close()
             return jsonify({'message': 'No graded assignments found'}), 404
         totalgrade = sum([submission[1] for submission in submissions])
         average = totalgrade / len(submissions)
-        cursor.close()
-        db.close()
         return make_response(jsonify({
             'student_id': student_id,
             'course_id': course_id,
             'average_grade': round(average, 2)
         }), 200)
     except Exception as e:
-        cursor.close()
-        db.close()
         return jsonify({'error': str(e)}), 500
+    finally:
+        cursor.close()
+
+
+
+
+
+####################################################### REPORTS ###########################
+
 
 # Route to get courses with 50+ students
 @app.route('/reports_courses_50plus', methods=['GET'])
 def get_courses_50plus():
     try:
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
         # Query to retrieve courses with 50 plus students USING A VIEW
         cursor.execute("""SELECT c.Course_Id, c.C_Title, COUNT(e.Std_Id) AS Student_Count
@@ -819,19 +712,17 @@ def get_courses_50plus():
             course['courseTitle'] = course_name
             course['studentCount'] = student_count
             results.append(course)
-        cursor.close()
-        db.close()
         return make_response(jsonify(results), 200)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 400)
+    finally:
+        cursor.close()
 
 # Route to get students in 5+ courses
 @app.route('/reports_students_5plus', methods=['GET'])
 def get_students_5plus():
     try:
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
+        #db = mysql.connector.connect(host="localhost", user="UWICOMP3161_Test", password="UWICOMP3161", database="school_test")
         cursor = db.cursor()
         # Query to retrieve students in 5 or more courses USING A VIEW
         cursor.execute("""SELECT e.Std_Id, u.f_Name, u.l_Name, COUNT(e.Course_Id) AS Course_Count
@@ -848,19 +739,17 @@ def get_students_5plus():
             student['lastName'] = last_name
             student['courseCount'] = course_count
             results.append(student)
-        cursor.close()
-        db.close()
         return make_response(jsonify(results), 200)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 400)
+    finally:
+        cursor.close()
 
 # Route to get lecturers that teach 3+ courses
 @app.route('/reports_lecturers_3plus', methods=['GET'])
 def get_lecturers_3plus():
     try:
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
+        #db = mysql.connector.connect(host="localhost", user="UWICOMP3161_Test", password="UWICOMP3161", database="school_test")
         cursor = db.cursor()
         # Query to retrieve all lecturers that teach 3 or more courses USING A VIEW
         cursor.execute("""SELECT t.Lect_Id, u.f_Name, u.l_Name, COUNT(t.Course_Id) AS Course_Count
@@ -877,19 +766,17 @@ def get_lecturers_3plus():
             lecturer['lastName'] = last_name
             lecturer['courseCount'] = course_count
             results.append(lecturer)
-        cursor.close()
-        db.close()
         return make_response(jsonify(results), 200)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 400)
+    finally:
+        cursor.close()
     
 # Route to get top 10 most enrolled courses
 @app.route('/reports_top10courses', methods=['GET'])
 def get_top10_courses():
     try:
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
+        #db = mysql.connector.connect(host="localhost", user="UWICOMP3161_Test", password="UWICOMP3161", database="school_test")
         cursor = db.cursor()
         # Query to retrieve top 10 most enrolled courses USING A VIEW
         cursor.execute("""SELECT c.Course_Id, c.C_Title, COUNT(e.Std_Id) AS Student_Count
@@ -906,19 +793,17 @@ def get_top10_courses():
             course['courseTitle'] = course_name
             course['studentCount'] = student_count
             results.append(course)
-        cursor.close()
-        db.close()
         return make_response(jsonify(results), 200)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 400)
+    finally:
+        cursor.close()
 
 # Route to get top 10 students based on average grades
 @app.route('/reports_top10students', methods=['GET'])
 def get_top10_students():
     try:
-        db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
+        #db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
         cursor = db.cursor()
         # Query to retrieve top 10 students with the highest averages USING A VIEW
         cursor.execute("""SELECT e.Std_Id, u.f_Name, u.l_Name, AVG(e.Grade) AS Overall_Grade
@@ -936,13 +821,11 @@ def get_top10_students():
             student['lastName'] = last_name
             student['averageGrade'] = round(averageGrade, 2) if averageGrade is not None else 0
             results.append(student)
-        cursor.close()
-        db.close()
         return make_response(jsonify(results), 200)
     except Error as e:
-        cursor.close()
-        db.close()
         return make_response(jsonify({'error': str(e)}), 400)
+    finally:
+        cursor.close()
         
 ################################################################################## FRONTEND DONE ^ ########################################## 
 
