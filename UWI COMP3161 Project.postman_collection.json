@@ -68,7 +68,7 @@
 					"formdata": [
 						{
 							"key": "userID",
-							"value": "620001064",
+							"value": "620100060",
 							"type": "text"
 						},
 						{
@@ -105,7 +105,7 @@
 					"formdata": [
 						{
 							"key": "courseID",
-							"value": "llll-1234",
+							"value": "abcd-1234",
 							"type": "text"
 						},
 						{
@@ -188,7 +188,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:5000/get_course_student/620000060",
+					"raw": "http://127.0.0.1:5000/get_course_student/620100059",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -199,7 +199,7 @@
 					"port": "5000",
 					"path": [
 						"get_course_student",
-						"620000060"
+						"620100059"
 					]
 				}
 			},
@@ -215,12 +215,12 @@
 					"formdata": [
 						{
 							"key": "SID",
-							"value": "620000411",
+							"value": "620100060",
 							"type": "text"
 						},
 						{
 							"key": "CID",
-							"value": "YOug-3305",
+							"value": "abcd-1234",
 							"type": "text"
 						}
 					]
@@ -257,7 +257,7 @@
 						},
 						{
 							"key": "CID",
-							"value": "dHnx-8328",
+							"value": "abcd-1234",
 							"type": "text"
 						}
 					]
@@ -285,7 +285,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:5000/Enrols/dHnx-8328",
+					"raw": "http://127.0.0.1:5000/Enrols/abcd-1234",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -296,7 +296,7 @@
 					"port": "5000",
 					"path": [
 						"Enrols",
-						"dHnx-8328"
+						"abcd-1234"
 					]
 				}
 			},
@@ -308,7 +308,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:5000/Calendar_Events/dHnx-8328",
+					"raw": "http://127.0.0.1:5000/Calendar_Events/eoYF-5300",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -319,7 +319,643 @@
 					"port": "5000",
 					"path": [
 						"Calendar_Events",
-						"dHnx-8328"
+						"eoYF-5300"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_events_by_student_id(Student_Id, Date)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/Calendar_Events/620100059/2025-03-11",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"Calendar_Events",
+						"620100059",
+						"2025-03-11"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add_event()",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "courseID",
+							"value": "eoYF-5300",
+							"type": "text"
+						},
+						{
+							"key": "startDate",
+							"value": "2025-04-18",
+							"type": "text"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-06-20",
+							"type": "text"
+						},
+						{
+							"key": "eventTitle",
+							"value": "Project on Animal Life",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/add_event",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"add_event"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_forums(Course_Id)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/forums/eoYF-5300",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"forums",
+						"eoYF-5300"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add_forum()",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "forumCourseID",
+							"value": "eoYF-5300",
+							"type": "text"
+						},
+						{
+							"key": "forumTitle",
+							"value": "Logic Gate Analysis",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/add_forum",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"add_forum"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_threads(Forum_Id)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/see_threads/108",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"see_threads",
+						"108"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create_threads()",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "FID",
+							"value": "108",
+							"type": "text"
+						},
+						{
+							"key": "CTtitle",
+							"value": "Revolutionize viral platforms Thread",
+							"type": "text"
+						},
+						{
+							"key": "CTdte",
+							"value": "2025-04-20",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/create_threads",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"create_threads"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "reply_threads()",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "TID",
+							"value": "798",
+							"type": "text"
+						},
+						{
+							"key": "RTtitle",
+							"value": "Great Point",
+							"type": "text"
+						},
+						{
+							"key": "RTdte",
+							"value": "2025-04-21",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/reply_threads",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"reply_threads"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add_topic()",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "contentCourseID",
+							"value": "eoYF-5300",
+							"type": "text"
+						},
+						{
+							"key": "topicTitle",
+							"value": "Mechanics",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/add_topic",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"add_topic"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add_content()",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "topicID",
+							"value": "600",
+							"type": "text"
+						},
+						{
+							"key": "link",
+							"value": "https://www.montes.com/",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"value": "lecture_1198.pdf",
+							"type": "text"
+						},
+						{
+							"key": "slide",
+							"value": "slide_1198.pptx",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/add_content",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"add_content"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_course_content(course_id)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/course_content/eoYF-5300",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"course_content",
+						"eoYF-5300"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add_Assigments()",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "AssCourseID",
+							"value": "eoYF-5300",
+							"type": "text"
+						},
+						{
+							"key": "AssTitle",
+							"value": "Project on Mechanics",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/add_assignment",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"add_assignment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "see_Assigments(course_id)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/see_assignment/eoYF-5300",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"see_assignment",
+						"eoYF-5300"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "submit_Assigments()",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "subStdID",
+							"value": "620100059",
+							"type": "text"
+						},
+						{
+							"key": "subAssID",
+							"value": "601",
+							"type": "text"
+						},
+						{
+							"key": "subFile",
+							"value": "As_601.docx",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/submit_assignment",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"submit_assignment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "grade_Assignments()",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "subStdID",
+							"value": "620100059",
+							"type": "text"
+						},
+						{
+							"key": "subAssID",
+							"value": "601",
+							"type": "text"
+						},
+						{
+							"key": "grade",
+							"value": "87",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/grade_assignment",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"grade_assignment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_student_average()",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "Std_Id",
+							"value": "620100059",
+							"type": "text"
+						},
+						{
+							"key": "Course_Id",
+							"value": "eoYF-5300",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/student_course_average",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"student_course_average"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_courses_50plus()",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/reports_courses_50plus",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"reports_courses_50plus"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_students_5plus()",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/reports_students_5plus",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"reports_students_5plus"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_lecturers_3plus()",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/reports_lecturers_3plus",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"reports_lecturers_3plus"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_top10_courses()",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/reports_top10courses",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"reports_top10courses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_top10_students()",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/reports_top10students",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"reports_top10students"
 					]
 				}
 			},

@@ -631,8 +631,9 @@ def submit_Assigments():
         submit_time = datetime.now()
         submission_file = data.get('subFile')
         cursor.execute("""INSERT INTO Submits (Std_Id, Assign_Id, Assign_grade, submit_time, submission)
-            VALUES (%s, %s, %s,%s,%s)""", (student_id, assign_id, None, submit_time, submission_file))
-        return make_response(jsonify({'message': 'Assignment submitted successfully'}), 201)
+            VALUES (%s, %s, %s, %s, %s)""", (student_id, assign_id, None, submit_time, submission_file))
+        db.commit()
+        return make_response(jsonify({'message': f'Assignment submitted successfully on {submit_time}'}), 201)
      except Exception as e:
         return make_response(jsonify({'error': str(e)}), 500)
      finally:
@@ -676,6 +677,18 @@ def get_student_average():
             return jsonify({'message': 'No graded assignments found'}), 404
         totalgrade = sum([submission[1] for submission in submissions])
         average = totalgrade / len(submissions)
+
+        cursor.execute("SELECT 1 FROM Enrols WHERE Std_Id = %s AND Course_Id = %s", (student_id, course_id))
+        if cursor.fetchone() is None:
+            cursor.execute("""INSERT INTO Enrols (Std_Id, Course_Id, Grade)
+            VALUES (%s, %s, %s)""", (student_id, course_id, int(average)))
+            db.commit()
+        else:
+            cursor.execute("""UPDATE Enrols SET Grade = %s
+                       WHERE Std_Id = %s AND Course_Id = %s
+                       """,(int(average), student_id, course_id))
+            db.commit()
+
         return make_response(jsonify({
             'student_id': student_id,
             'course_id': course_id,
@@ -722,7 +735,6 @@ def get_courses_50plus():
 @app.route('/reports_students_5plus', methods=['GET'])
 def get_students_5plus():
     try:
-        #db = mysql.connector.connect(host="localhost", user="UWICOMP3161_Test", password="UWICOMP3161", database="school_test")
         cursor = db.cursor()
         # Query to retrieve students in 5 or more courses USING A VIEW
         cursor.execute("""SELECT e.Std_Id, u.f_Name, u.l_Name, COUNT(e.Course_Id) AS Course_Count

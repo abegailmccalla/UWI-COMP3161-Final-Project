@@ -174,12 +174,21 @@ with open('School_Database.sql', 'w') as file:
     for c in cenrol:
         for s in c[1]:
             enrols.append((s, [c[0]])) #(s, [(c[0])])
-    for s in enrols:
+    stu_5_lst = [en for en in enrols[0: 500]] #500
+    for s in stu_5_lst: 
         for c in range(0, 4):
             crse = random.choice(courses)
             while crse[0] in s[1]:
                 crse = random.choice(courses)
             s[1].append(crse[0])
+    stu_3_lst = [en for en in enrols[500:]] #500
+    for s in stu_3_lst: 
+        for c in range(0, 2):
+            crse = random.choice(courses)
+            while crse[0] in s[1]:
+                crse = random.choice(courses)
+            s[1].append(crse[0])
+    enrols = stu_5_lst + stu_3_lst
 
     # Create Student Submits Table
     file.write("\n-- Submits --\n")

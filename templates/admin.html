@@ -101,7 +101,6 @@
             </tbody>
         </table>
 
-        <!-- Table for courses with 50+ students -->
         <table id="Cse5Table" style="display: none;">
             <caption style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Students With 5+ Courses</caption>
             <!-- <h2>Courses List</h2> -->
@@ -134,7 +133,6 @@
             </tbody>
         </table>
 
-        <!-- Table for courses with 50+ students -->
         <table id="C10Table" style="display: none;">
             <caption style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">10 Most Enrolled Courses</caption>
             <!-- <h2>Courses List</h2> -->
@@ -150,7 +148,6 @@
             </tbody>
         </table>
 
-        <!-- Table for courses with 50+ students -->
         <table id="S10Table" style="display: none;">
             <caption style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Top 10 Students</caption>
             <!-- <h2>Courses List</h2> -->
@@ -438,8 +435,8 @@
                     });
             }
 
-             // --------------------------Get All Lecturers With 3+ Courses
-             function fetchL3Table() {
+            // --------------------------Get All Lecturers With 3+ Courses
+            function fetchL3Table() {
                 // Fetch courses from the /get_courses route
                 const table = document.getElementById('L3Table');
                 // Check if the table is currently visible
