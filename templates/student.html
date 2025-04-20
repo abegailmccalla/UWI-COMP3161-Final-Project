@@ -75,7 +75,6 @@
     <div id="submitAssForm" style="display: none;">
         <h2>Submit Course Assignment</h2>
         <form id="submitAssFormElement">
-
             <label for="subStdID">Student ID:</label><br>
             <input type="number" id="subStdID" name="subStdID" required><br><br>
 
@@ -700,6 +699,7 @@
             if (form.style.display === "block") {
                 form.style.display = "none";
             } else {
+                form.style.display = "block"
                 document.getElementById("SCForm").style.display = "none";
                 document.getElementById("CTForm").style.display = "none";
                 document.getElementById("RTForm").style.display = "none";
