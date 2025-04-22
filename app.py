@@ -11,7 +11,7 @@ app = Flask(__name__)
 # Connect to the MySQL database
 # mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
 # mysql.connector.connect(host="localhost", user="UWICOMP3161_Test", password="UWICOMP3161", database="school_test")
-db = mysql.connector.connect(host="localhost", user="UWICOMP3161_Test", password="UWICOMP3161", database="school_test")
+db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
 
 @app.route('/')
 def home():
@@ -700,7 +700,7 @@ def grade_Assignments():
                        WHERE Std_Id = %s AND Course_Id = %s
                        """,(int(average), student_id, course_id[0]))
             db.commit()
-            
+
         if cursor.rowcount == 0:
             return make_response(jsonify({'error': 'Submission not found'}), 404)
         return make_response(jsonify({'message': 'Grade added successfully'}), 200)
