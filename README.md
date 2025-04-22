@@ -10,8 +10,8 @@ $ flask --app app --debug run
 ```
 Group Members and Respective Tasks:
 
-> Abegail McCalla (620157646): Database Creation, Frontend and Backend Routes 
+> Abegail McCalla (620157646): Created Database (Created Tables and Inserted Data), Postman Collection, Created Frontend, Assisted with Backend REST API, Assisted with SQL Queries and Testing
 
-> Tanisha Comrie (620156117): ERD Creation and Backend Routes
+> Tanisha Comrie (620156117): Created ERD Diagram, Normalization, Created Backend REST API, Created SQL Queries and Cloud
 
-> Carville Monteith (620138741): Backend Routes and Frontend
+> Carville Monteith (620138741): Created Backend REST API and Created SQL Queries

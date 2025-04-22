@@ -11,7 +11,7 @@ app = Flask(__name__)
 # Connect to the MySQL database
 # mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
 # mysql.connector.connect(host="localhost", user="UWICOMP3161_Test", password="UWICOMP3161", database="school_test")
-db = mysql.connector.connect(host="localhost", user="UWICOMP3161", password="UWICOMP3161", database="school")
+db = mysql.connector.connect(host="localhost", user="UWICOMP3161_Test", password="UWICOMP3161", database="school_test")
 
 @app.route('/')
 def home():
@@ -639,6 +639,26 @@ def submit_Assigments():
      finally:
         cursor.close()
 
+# @app.route("/grade_assignment", methods=['POST'])
+# def grade_Assignments():
+#     try:
+#         cursor = db.cursor()
+#         data = request.form
+#         student_id = data.get("subStdID")
+#         assign_id = data.get("subAssID")
+#         grade = data.get("grade")
+#         cursor.execute("""UPDATE Submits SET Assign_grade = %s
+#                        WHERE Assign_Id = %s AND Std_Id = %s
+#                        """,(grade, assign_id, student_id))
+#         db.commit()
+#         if cursor.rowcount == 0:
+#             return make_response(jsonify({'error': 'Submission not found'}), 404)
+#         return make_response(jsonify({'message': 'Grade added successfully'}), 200)
+#     except Exception as e:
+#         return make_response(jsonify({'error': str(e)}), 500)
+#     finally:
+#         cursor.close()
+
 @app.route("/grade_assignment", methods=['POST'])
 def grade_Assignments():
     try:
@@ -647,10 +667,40 @@ def grade_Assignments():
         student_id = data.get("subStdID")
         assign_id = data.get("subAssID")
         grade = data.get("grade")
+
+        # Update Submits Assignment Grade
         cursor.execute("""UPDATE Submits SET Assign_grade = %s
                        WHERE Assign_Id = %s AND Std_Id = %s
                        """,(grade, assign_id, student_id))
         db.commit()
+
+        # Get Average Assignment Grades for a Course
+        cursor.execute("SELECT Course_Id FROM Assignment WHERE Assign_Id = %s", (assign_id,))
+        course_id = cursor.fetchone()
+        cursor.execute("""
+            SELECT s.Assign_grade
+            FROM Submits s
+            JOIN Assignment a ON  s.Assign_Id = a.Assign_Id             
+            WHERE a.Course_Id = %s AND s.Std_Id = %s AND s.Assign_grade IS NOT NULL
+        """,(course_id[0], student_id))
+        submissions = cursor.fetchall()
+        if not submissions:
+            return jsonify({'message': 'No graded assignments found'}), 404
+        totalgrade = sum([submission[0] for submission in submissions])
+        average = totalgrade / len(submissions)
+ 
+        # Update Enrols Course Grade
+        cursor.execute("SELECT 1 FROM Enrols WHERE Std_Id = %s AND Course_Id = %s", (student_id, course_id[0]))
+        if cursor.fetchone() is None:
+            cursor.execute("""INSERT INTO Enrols (Std_Id, Course_Id, Grade)
+            VALUES (%s, %s, %s)""", (student_id, course_id[0], int(average)))
+            db.commit()
+        else:
+            cursor.execute("""UPDATE Enrols SET Grade = %s
+                       WHERE Std_Id = %s AND Course_Id = %s
+                       """,(int(average), student_id, course_id[0]))
+            db.commit()
+            
         if cursor.rowcount == 0:
             return make_response(jsonify({'error': 'Submission not found'}), 404)
         return make_response(jsonify({'message': 'Grade added successfully'}), 200)
@@ -658,6 +708,46 @@ def grade_Assignments():
         return make_response(jsonify({'error': str(e)}), 500)
     finally:
         cursor.close()
+
+# @app.route("/student_course_average", methods=['POST'])
+# def get_student_average():
+#     try:
+#         cursor = db.cursor()
+#         data = request.form
+#         student_id = data.get('Std_Id')
+#         course_id= data.get('Course_Id')
+#         cursor.execute("""
+#             SELECT a.Assign_Id, s.Assign_grade
+#             FROM Assignment a
+#             JOIN Submits s ON a.Assign_Id = s.Assign_Id
+#             WHERE a.Course_Id = %s AND s.Std_Id = %s AND s.Assign_grade IS NOT NULL
+#         """,(course_id, student_id))
+#         submissions = cursor.fetchall()
+#         if not submissions:
+#             return jsonify({'message': 'No graded assignments found'}), 404
+#         totalgrade = sum([submission[1] for submission in submissions])
+#         average = totalgrade / len(submissions)
+
+#         cursor.execute("SELECT 1 FROM Enrols WHERE Std_Id = %s AND Course_Id = %s", (student_id, course_id))
+#         if cursor.fetchone() is None:
+#             cursor.execute("""INSERT INTO Enrols (Std_Id, Course_Id, Grade)
+#             VALUES (%s, %s, %s)""", (student_id, course_id, int(average)))
+#             db.commit()
+#         else:
+#             cursor.execute("""UPDATE Enrols SET Grade = %s
+#                        WHERE Std_Id = %s AND Course_Id = %s
+#                        """,(int(average), student_id, course_id))
+#             db.commit()
+
+#         return make_response(jsonify({
+#             'student_id': student_id,
+#             'course_id': course_id,
+#             'average_grade': round(average, 2)
+#         }), 200)
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 500
+#     finally:
+#         cursor.close()
 
 @app.route("/student_course_average", methods=['POST'])
 def get_student_average():
@@ -667,39 +757,23 @@ def get_student_average():
         student_id = data.get('Std_Id')
         course_id= data.get('Course_Id')
         cursor.execute("""
-            SELECT a.Assign_Id, s.Assign_grade
-            FROM Assignment a
-            JOIN Submits s ON a.Assign_id = s.Assign_id
-            WHERE a.Course_Id = %s AND s.Std_Id = %s AND s.Assign_grade IS NOT NULL
+            SELECT Grade
+            FROM Enrols
+            WHERE Course_Id = %s AND Std_Id = %s
         """,(course_id, student_id))
-        submissions = cursor.fetchall()
-        if not submissions:
-            return jsonify({'message': 'No graded assignments found'}), 404
-        totalgrade = sum([submission[1] for submission in submissions])
-        average = totalgrade / len(submissions)
-
-        cursor.execute("SELECT 1 FROM Enrols WHERE Std_Id = %s AND Course_Id = %s", (student_id, course_id))
-        if cursor.fetchone() is None:
-            cursor.execute("""INSERT INTO Enrols (Std_Id, Course_Id, Grade)
-            VALUES (%s, %s, %s)""", (student_id, course_id, int(average)))
-            db.commit()
-        else:
-            cursor.execute("""UPDATE Enrols SET Grade = %s
-                       WHERE Std_Id = %s AND Course_Id = %s
-                       """,(int(average), student_id, course_id))
-            db.commit()
-
+        grade = cursor.fetchone()
+        if not grade:
+            return jsonify({'message': 'No course graded found'}), 404
+        
         return make_response(jsonify({
             'student_id': student_id,
             'course_id': course_id,
-            'average_grade': round(average, 2)
+            'average_grade': grade
         }), 200)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     finally:
         cursor.close()
-
-
 
 
 
