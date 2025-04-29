@@ -61,6 +61,7 @@
                 <tr>
                     <th>Course ID</th>
                     <th>Course Title</th>
+                    <th>Course Admin</th>
                 </tr>
             </thead>
             <tbody>
@@ -216,7 +217,13 @@
 
             // --------------------------Get All Courses
             function fetchCourses() {
-                // Fetch courses from the /get_courses route
+                const table = document.getElementById('coursesTable');
+                // Check if the table is currently visible
+                if (table.style.display === 'table') {
+                    // Hide the table if it is already visible
+                    table.style.display = 'none';
+                    return; // Exit the function
+                }
                 fetch('/get_courses')
                     .then(response => {
                         if (response.ok) {
@@ -226,7 +233,6 @@
                         }
                     })
                     .then(data => {
-                        const table = document.getElementById('coursesTable');
                         const tableBody = table.querySelector('tbody');
                         tableBody.innerHTML = ''; // Clear any existing rows
                         // Populate table with courses data
@@ -234,6 +240,7 @@
                             const row = `<tr>
                                             <td>${course.Course_Id}</td>
                                             <td>${course.C_Title}</td>
+                                            <td>${course.Admin_Id}</td>
                                          </tr>`;
                             tableBody.innerHTML += row; // Add rows dynamically
                         });

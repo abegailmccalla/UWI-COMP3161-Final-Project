@@ -115,18 +115,31 @@ with open('School_Database.sql', 'w') as file:
     
     # Create Course Table
     file.write("\n-- Course --\n")
-    file.write("CREATE TABLE Course (Course_Id VARCHAR(255) PRIMARY KEY, C_Title VARCHAR(255));\n")
+    file.write("CREATE TABLE Course (Course_Id VARCHAR(255) PRIMARY KEY, C_Title VARCHAR(255), Admin_Id INT, FOREIGN KEY (Admin_Id) REFERENCES Admin(Admin_Id) ON DELETE CASCADE);\n")
     # Generate fake data for courses   
     file.write("\n-- Insert Course\n")
     for c in range(1, 201):
         course_id = fake.lexify(text='????') + '-' + fake.numerify(text='####')
         c_title = fake.word()
         courses.append((course_id, c_title))
-        file.write(f"INSERT INTO Course (Course_Id, C_Title) VALUES ('{course_id}', '{c_title}');\n")
-    
+    course_ids = [cids[0] for cids in courses]
+    i = 0
+    for ads in admins:
+        for cl in range(i, len(course_ids), 10):
+            classes = course_ids[cl:cl + 10] #[cs[0] for cs in courses[cl:cl + clen]]
+            creates.append((ads, classes)) 
+            i = cl + 10
+            break
+    for c in courses:
+        for ads in creates:
+            if c[0] in ads[1]:
+                c = c + (ads[0],)
+                file.write(f"INSERT INTO Course (Course_Id, C_Title, Admin_Id) VALUES ('{c[0]}', '{c[1]}', {ads[0]});\n")
+                break
+ 
     # Create Teaches Table
     file.write("\n-- Teaches --\n")
-    file.write("CREATE TABLE Teaches (Lect_Id INT, Course_Id VARCHAR(255), PRIMARY KEY (Lect_Id, Course_Id), FOREIGN KEY (Lect_Id) REFERENCES Lecturer(Lect_Id), FOREIGN KEY (Course_Id) REFERENCES Course(Course_Id));\n")
+    file.write("CREATE TABLE Teaches (Lect_Id INT, Course_Id VARCHAR(255), PRIMARY KEY (Lect_Id, Course_Id), FOREIGN KEY (Lect_Id) REFERENCES Lecturer(Lect_Id), FOREIGN KEY (Course_Id) REFERENCES Course(Course_Id) ON DELETE CASCADE);\n")
     # Generate fake data for Teaches                                       
     file.write("\n-- Insert Teaches --\n")
     i = 0
@@ -143,7 +156,7 @@ with open('School_Database.sql', 'w') as file:
     
     # Create Assignments Table
     file.write("\n-- Assignment --\n")
-    file.write("CREATE TABLE Assignment (Assign_Id INT AUTO_INCREMENT PRIMARY KEY, Course_Id VARCHAR(255), Assign_Title VARCHAR(255), FOREIGN KEY (Course_Id) REFERENCES Course(Course_Id));\n")
+    file.write("CREATE TABLE Assignment (Assign_Id INT AUTO_INCREMENT PRIMARY KEY, Course_Id VARCHAR(255), Assign_Title VARCHAR(255), FOREIGN KEY (Course_Id) REFERENCES Course(Course_Id) ON DELETE CASCADE);\n")
     file.write("ALTER TABLE Assignment AUTO_INCREMENT = 1;\n")
     # Generate fake data for Assignment
     file.write("\n-- Insert Assignment --\n")
@@ -160,7 +173,7 @@ with open('School_Database.sql', 'w') as file:
 
     # Create Enrol Table
     file.write("\n-- Enrols --\n")
-    file.write("CREATE TABLE Enrols (Std_Id INT, Course_Id VARCHAR(255), Grade INT DEFAULT NULL, PRIMARY KEY (Std_Id, Course_Id), FOREIGN KEY (Std_Id) REFERENCES Student(Std_Id), FOREIGN KEY (Course_Id) REFERENCES Course(Course_Id));\n")
+    file.write("CREATE TABLE Enrols (Std_Id INT, Course_Id VARCHAR(255), Grade INT DEFAULT NULL, PRIMARY KEY (Std_Id, Course_Id), FOREIGN KEY (Std_Id) REFERENCES Student(Std_Id), FOREIGN KEY (Course_Id) REFERENCES Course(Course_Id) ON DELETE CASCADE);\n")
     # Generate fake data for Assignment
     stds = []
     cenrol = []
@@ -192,7 +205,7 @@ with open('School_Database.sql', 'w') as file:
 
     # Create Student Submits Table
     file.write("\n-- Submits --\n")
-    file.write("CREATE TABLE Submits (Std_Id INT, Assign_Id INT, Assign_grade INT DEFAULT NULL, submit_time DATE, submission VARCHAR(255), PRIMARY KEY (Std_Id, Assign_Id), FOREIGN KEY (Std_Id) REFERENCES Student(Std_Id), FOREIGN KEY (Assign_Id) REFERENCES Assignment(Assign_Id));\n")
+    file.write("CREATE TABLE Submits (Std_Id INT, Assign_Id INT, Assign_grade INT DEFAULT NULL, submit_time DATE, submission VARCHAR(255), PRIMARY KEY (Std_Id, Assign_Id), FOREIGN KEY (Std_Id) REFERENCES Student(Std_Id), FOREIGN KEY (Assign_Id) REFERENCES Assignment(Assign_Id) ON DELETE CASCADE);\n")
     # Generate fake data for Submits
     file.write("\n-- Insert Submits --\n")
     c_idx = 0
@@ -234,7 +247,7 @@ with open('School_Database.sql', 'w') as file:
     
     # Create Discussion_Forum Table
     file.write("\n-- Discussion_Forum --\n")
-    file.write("CREATE TABLE Discussion_Forum (Forum_Id INT AUTO_INCREMENT PRIMARY KEY, Course_Id VARCHAR(255), Forum_Title VARCHAR(255), FOREIGN KEY (Course_Id) REFERENCES Course(Course_Id));\n")
+    file.write("CREATE TABLE Discussion_Forum (Forum_Id INT AUTO_INCREMENT PRIMARY KEY, Course_Id VARCHAR(255), Forum_Title VARCHAR(255), FOREIGN KEY (Course_Id) REFERENCES Course(Course_Id) ON DELETE CASCADE);\n")
     file.write("ALTER TABLE Discussion_Forum AUTO_INCREMENT = 1;\n")
     # Generate fake data for Discussion_Forum
     forum_id = 1
@@ -247,7 +260,7 @@ with open('School_Database.sql', 'w') as file:
     
     # Create Discussion_Thread Table
     file.write("\n-- Discussion_Thread --\n")
-    file.write("CREATE TABLE Discussion_Thread (Thread_Id INT AUTO_INCREMENT PRIMARY KEY, Forum_Id INT, Thread_Title VARCHAR(255), date Date, FOREIGN KEY (Forum_Id) REFERENCES Discussion_Forum(Forum_Id));\n")
+    file.write("CREATE TABLE Discussion_Thread (Thread_Id INT AUTO_INCREMENT PRIMARY KEY, Forum_Id INT, Thread_Title VARCHAR(255), date Date, FOREIGN KEY (Forum_Id) REFERENCES Discussion_Forum(Forum_Id) ON DELETE CASCADE);\n")
     file.write("ALTER TABLE Discussion_Thread AUTO_INCREMENT = 1;\n")
     # Create Generates Table
     #file.write("\n-- Generates --\n")
@@ -270,26 +283,9 @@ with open('School_Database.sql', 'w') as file:
             #generates.append((sid, thread_id, title, date))
             thread_id += 1
     
-    # Create Creates Table
-    file.write("\n-- Creates --\n")
-    file.write("CREATE TABLE Creates (Admin_Id INT, Course_Id VARCHAR(255), PRIMARY KEY (Admin_Id, Course_Id), FOREIGN KEY (Course_Id) REFERENCES Course(Course_Id));\n")
-    # Generate fake data for Creates
-    course_ids = [cids[0] for cids in courses]
-    i = 0
-    for ads in admins:
-        for cl in range(i, len(course_ids), 10):
-            classes = course_ids[cl:cl + 10] #[cs[0] for cs in courses[cl:cl + clen]]
-            creates.append((ads, classes)) 
-            i = cl + 10
-            break
-    for ads in creates:
-        ad_id = ads[0]
-        for cla in ads[1]:
-            file.write(f"INSERT INTO Creates (Admin_Id, Course_Id) VALUES ({ad_id}, '{cla}');\n")
-    
     # Create Topic Table
     file.write("\n-- Topic --\n")
-    file.write("CREATE TABLE Topic (Topic_Id INT AUTO_INCREMENT PRIMARY KEY, Course_Id VARCHAR(255), Topic_Title VARCHAR(255), FOREIGN KEY (Course_Id) REFERENCES Course(Course_Id));\n")
+    file.write("CREATE TABLE Topic (Topic_Id INT AUTO_INCREMENT PRIMARY KEY, Course_Id VARCHAR(255), Topic_Title VARCHAR(255), FOREIGN KEY (Course_Id) REFERENCES Course(Course_Id) ON DELETE CASCADE);\n")
     file.write("ALTER TABLE Topic AUTO_INCREMENT = 1;\n")
     # Generate fake data for Topic
     topic_id = 1
@@ -306,7 +302,7 @@ with open('School_Database.sql', 'w') as file:
     
         # Create Content Table
     file.write("\n-- Content --\n")
-    file.write("CREATE TABLE Content (Content_Id INT AUTO_INCREMENT PRIMARY KEY, Topic_Id INT, link VARCHAR(255), file VARCHAR(255), slide VARCHAR(255), FOREIGN KEY (Topic_Id) REFERENCES Topic(Topic_Id));\n")
+    file.write("CREATE TABLE Content (Content_Id INT AUTO_INCREMENT PRIMARY KEY, Topic_Id INT, link VARCHAR(255), file VARCHAR(255), slide VARCHAR(255), FOREIGN KEY (Topic_Id) REFERENCES Topic(Topic_Id) ON DELETE CASCADE);\n")
     file.write("ALTER TABLE Content AUTO_INCREMENT = 1;\n")
     # Generate fake data for Content
     content_id = 1
@@ -323,7 +319,7 @@ with open('School_Database.sql', 'w') as file:
 
     # Create Events Table
     file.write("\n-- Events --\n")
-    file.write("CREATE TABLE Events (Event_Id INT AUTO_INCREMENT PRIMARY KEY, Course_Id VARCHAR(255), Start_Date DATE, End_Date DATE, Event_Title VARCHAR(255), FOREIGN KEY (Course_Id) REFERENCES Course(Course_Id));\n")
+    file.write("CREATE TABLE Events (Event_Id INT AUTO_INCREMENT PRIMARY KEY, Course_Id VARCHAR(255), Start_Date DATE, End_Date DATE, Event_Title VARCHAR(255), FOREIGN KEY (Course_Id) REFERENCES Course(Course_Id) ON DELETE CASCADE);\n")
     file.write("ALTER TABLE Events AUTO_INCREMENT = 1;\n")
     # Generate fake data for Events
     event_id = 1

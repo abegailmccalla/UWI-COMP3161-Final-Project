@@ -115,15 +115,16 @@ def newCourse():
         cursor.execute("SELECT * FROM Admin WHERE Admin_Id = %s", (adminID,))
         admin = cursor.fetchone()
         if not admin:
-            return make_response(jsonify({'error': 'Unauthorized. Only admins can create a course.'}), 403)
+            return make_response(jsonify({'error': 'Unauthorized. Only admins can create a course.'}), 401)
+        # Check if the course already exists in the course table
+        cursor.execute("SELECT * FROM Course WHERE Course_Id = %s", (courseID,))
+        course = cursor.fetchone()
+        if course:
+            return make_response(jsonify({'error': 'Course Already Exists.'}), 403)
         cursor.execute("""
-            INSERT INTO Course (Course_Id, C_Title)
-            VALUES (%s, %s)
-        """, (courseID, title))
-        cursor.execute("""
-            INSERT INTO Creates (Admin_Id, Course_Id)
-            VALUES (%s, %s)
-        """, (adminID, courseID))
+            INSERT INTO Course (Course_Id, C_Title, Admin_Id)
+            VALUES (%s, %s, %s)
+        """, (courseID, title, adminID))
         db.commit()
         return make_response(jsonify({'message': f"Course {courseID} created successfully"}), 201)
     except Error as e:
@@ -136,7 +137,7 @@ def newCourse():
 def get_all_courses():
     try:
         cursor = db.cursor(dictionary = True)
-        cursor.execute("SELECT Course_Id, C_Title FROM Course")
+        cursor.execute("SELECT * FROM Course")
         course_list = cursor.fetchall()
         return make_response(jsonify(course_list), 200)
     except Error as e:
